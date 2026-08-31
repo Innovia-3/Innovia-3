@@ -8,6 +8,6 @@ namespace api.Models
 {
     public class User : IdentityUser
     {
-        ICollection<Booking>? UserBookings { get; set; }
+        public ICollection<Booking>? UserBookings { get; set; }
     }
 }
