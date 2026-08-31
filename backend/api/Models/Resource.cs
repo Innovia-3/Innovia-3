@@ -13,6 +13,8 @@ namespace api.Models
         public int? Capacity { get; set; }
         public bool IsAvailable { get; set; } /* Eftersom vi ska hantera om en bokning är temporärt reserverad kan vi lösa
         detta med hjälp av state i React, blir bool jobbigt senare i projektet kan vi enkelt lösa det i frontend. */
+        /* FK */
+        public int BookingId {get; set;}
         public ICollection<Booking> Bookings { get; set; } = new List<Booking>(); 
     }
 }
