@@ -2,46 +2,53 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using api.Data;
 using api.Interfaces;
 using api.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace api.Repositories
 {
     public class BookingRepository : IBookingRepository
     {
+        private readonly AppDbContext _context;
+
+        public BookingRepository(AppDbContext context)
+        {
+            _context = context;
+        }
+
         public async Task<bool> CheckIsAvailableAsync(DateTime startTime, DateTime endTime, int resourceId)
         {
-            throw new NotImplementedException();
+            var unavailable = await _context.Bookings.AnyAsync
+            (b => b.ResourceId == resourceId && startTime < b.EndTime && endTime > b.StartTime);
+            return !unavailable;
         }
 
         public async Task<Booking> CreateBookingAsync(Booking booking)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException(); /* Avvakta! */
         }
 
         public async Task<IEnumerable<Booking>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            return await _context.Bookings.ToListAsync();
         }
 
         public async Task<Booking?> GetByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            return await _context.Bookings.FirstOrDefaultAsync(b => b.BookingId == id);
         }
 
-        public async Task<IEnumerable<Booking>> GetByResourceIdAsync()
+        public async Task<IEnumerable<Booking>> GetByResourceIdAsync(int resourceId)
         {
-            throw new NotImplementedException();
+            return await _context.Bookings.Where(b => b.ResourceId == resourceId).ToListAsync();
         }
 
         public async Task<IEnumerable<Booking>> GetByUserIdAsync(string id)
         {
-            throw new NotImplementedException();
-        }
+            return await _context.Bookings.Where(b => b.UserId == id).ToListAsync();
 
-        public async Task<bool> HasOverlappingBookingAsync(DateTime startTime, DateTime endTime, int resourceId)
-        {
-            throw new NotImplementedException();
         }
     }
 }

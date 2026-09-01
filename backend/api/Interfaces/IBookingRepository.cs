@@ -10,10 +10,10 @@ namespace api.Interfaces
     public interface IBookingRepository
     {
         /* Samma visa som resurs, vad är relevant */
-        Task<Booking?> GetByIdAsync(int id);  
+        Task<Booking?> GetByIdAsync(int id);
         Task<IEnumerable<Booking>> GetAllAsync();
-        Task<IEnumerable<Booking>>GetByUserIdAsync(string id); 
-        Task<IEnumerable<Booking>> GetByResourceIdAsync();
+        Task<IEnumerable<Booking>> GetByUserIdAsync(string id);
+        Task<IEnumerable<Booking>> GetByResourceIdAsync(int resourceId);
         Task<bool> CheckIsAvailableAsync(DateTime startTime, DateTime endTime, int resourceId);
         Task<Booking> CreateBookingAsync(Booking booking);
 
@@ -27,6 +27,6 @@ namespace api.Interfaces
         // Fetch alla typer -> Fetch alla skrivbord -> O -> 
 
         //Fetch -> O ->  
-        /* Istället för att hantera bokningslogiken med en bool? */ 
+        /* Istället för att hantera bokningslogiken med en bool? */
     }
 }
