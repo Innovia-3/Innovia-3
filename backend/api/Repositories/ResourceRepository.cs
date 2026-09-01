@@ -2,27 +2,35 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using api.Data;
 using api.Enums;
 using api.Interfaces;
 using api.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace api.Repositories
 {
     public class ResourceRepository : IResourceRepository
     {
-        public Task<List<Resource>> GetAllAsync()
+        private readonly AppDbContext _context;
+        public ResourceRepository(AppDbContext context)
         {
-            throw new NotImplementedException();
+            _context = context;
         }
 
-        public Task<List<Resource>> GetByTypeAsync(ResourceType type)
+        public async Task<List<Resource>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            return await _context.Resources.ToListAsync();
         }
 
-        public Task<Resource?> GetResourceAsync(int id)
+        public async Task<List<Resource>> GetByTypeAsync(ResourceType type)
         {
-            throw new NotImplementedException();
+            return await _context.Resources.Where(r => r.ResourceType == type).ToListAsync();
+        }
+
+        public async Task<Resource?> GetResourceAsync(int id)
+        {
+            return await _context.Resources.FirstOrDefaultAsync(i => i.ResourceId == id);
         }
     }
 }
