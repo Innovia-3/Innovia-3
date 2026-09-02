@@ -14,8 +14,8 @@ namespace api.Interfaces
         Task<IEnumerable<Booking>> GetAllAsync();
         Task<IEnumerable<Booking>> GetByUserIdAsync(string id);
         Task<IEnumerable<Booking>> GetByResourceIdAsync(int resourceId);
-        Task<bool> CheckIsAvailableAsync(DateTime startTime, DateTime endTime, int resourceId);
-        Task<Booking> CreateBookingAsync(Booking booking);
+        Task<bool> IsResourceAvailableAsync(DateTime startTime, DateTime endTime, int resourceId);
+        Task<Booking?> CreateBookingAsync(Booking booking);
 
 
 

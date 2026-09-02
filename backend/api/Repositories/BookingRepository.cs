@@ -18,16 +18,25 @@ namespace api.Repositories
             _context = context;
         }
 
-        public async Task<bool> CheckIsAvailableAsync(DateTime startTime, DateTime endTime, int resourceId)
+        public async Task<bool> IsResourceAvailableAsync(DateTime startTime, DateTime endTime, int resourceId)
         {
-            var unavailable = await _context.Bookings.AnyAsync
+            var alreadyBooked = await _context.Bookings.AnyAsync
             (b => b.ResourceId == resourceId && startTime < b.EndTime && endTime > b.StartTime);
-            return !unavailable;
+            return !alreadyBooked;
         }
 
-        public async Task<Booking> CreateBookingAsync(Booking booking)
+        public async Task<Booking?> CreateBookingAsync(Booking booking)
         {
-            throw new NotImplementedException(); /* Avvakta! */
+            var alreadyBooked = await IsResourceAvailableAsync(booking.StartTime, booking.EndTime, booking.ResourceId);
+
+            if (alreadyBooked)
+            {
+                return null;
+            }
+            await _context.Bookings.AddAsync(booking); /* dto */
+            await _context.SaveChangesAsync();
+
+            return booking;             
         }
 
         public async Task<IEnumerable<Booking>> GetAllAsync()
