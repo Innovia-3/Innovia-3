@@ -17,6 +17,14 @@ namespace api.Repositories
         {
             _context = context;
         }
+        public async Task<IEnumerable<Booking>> GetAllAsync()
+        {
+            return await _context.Bookings.ToListAsync();
+        }
+        public async Task<Booking?> GetByIdAsync(int id)
+        {
+            return await _context.Bookings.FirstOrDefaultAsync(b => b.BookingId == id);
+        }
 
         public async Task<bool> IsResourceAvailableAsync(DateTime startTime, DateTime endTime, int resourceId)
         {
@@ -37,16 +45,6 @@ namespace api.Repositories
             await _context.SaveChangesAsync();
 
             return booking;             
-        }
-
-        public async Task<IEnumerable<Booking>> GetAllAsync()
-        {
-            return await _context.Bookings.ToListAsync();
-        }
-
-        public async Task<Booking?> GetByIdAsync(int id)
-        {
-            return await _context.Bookings.FirstOrDefaultAsync(b => b.BookingId == id);
         }
 
         public async Task<IEnumerable<Booking>> GetByResourceIdAsync(int resourceId)

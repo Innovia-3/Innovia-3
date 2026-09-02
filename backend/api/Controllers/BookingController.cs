@@ -1,0 +1,75 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using api.Interfaces;
+using api.Models;
+using Microsoft.AspNetCore.Mvc;
+
+namespace api.Controllers
+{
+    [ApiController]
+    [Route("api/[controller]s")]
+    public class BookingController : ControllerBase
+    {
+        private readonly IBookingRepository _bookingRepository;
+        public BookingController(IBookingRepository bookingRepository)
+        {
+            _bookingRepository = bookingRepository;
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            var bookings = await _bookingRepository.GetAllAsync();
+
+            return Ok(bookings);
+        }
+
+        [HttpGet("{id:int}")]
+        public async Task<IActionResult> GetById([FromRoute] int id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+            var booking = await _bookingRepository.GetByIdAsync(id);
+
+            if (booking == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(booking);
+        }
+
+        [HttpGet("resource/{resourceId:int}")]
+        public async Task<IActionResult> GetByResourceId([FromRoute] int resourceId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            var bookings = await _bookingRepository.GetByResourceIdAsync(resourceId);
+
+            return Ok(bookings);
+        }
+
+        /*   [HttpPost]
+          public async Task<IActionResult> CreateBooking([FromBody] Booking booking)
+          {            
+              if(!ModelState.IsValid)
+              {
+                  return BadRequest();
+              }       
+              booking =  await _bookingRepository.CreateBookingAsync(booking);
+              return booking;
+          } */
+    }
+}

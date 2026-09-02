@@ -10,8 +10,8 @@ namespace api.Interfaces
     public interface IBookingRepository
     {
         /* Samma visa som resurs, vad är relevant */
-        Task<Booking?> GetByIdAsync(int id);
         Task<IEnumerable<Booking>> GetAllAsync();
+        Task<Booking?> GetByIdAsync(int id);
         Task<IEnumerable<Booking>> GetByUserIdAsync(string id);
         Task<IEnumerable<Booking>> GetByResourceIdAsync(int resourceId);
         Task<bool> IsResourceAvailableAsync(DateTime startTime, DateTime endTime, int resourceId);
