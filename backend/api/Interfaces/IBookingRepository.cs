@@ -16,7 +16,7 @@ namespace api.Interfaces
         Task<IEnumerable<Booking>> GetByResourceIdAsync(int resourceId);
         Task<bool> IsResourceAvailableAsync(DateTime startTime, DateTime endTime, int resourceId);
         Task<Booking?> CreateBookingAsync(Booking booking);
-
+        Task<Booking?> DeleteBookingAsync(Booking booking); 
 
 
         // Task<Id|null>(resourceType, time)

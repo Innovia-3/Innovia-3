@@ -44,7 +44,7 @@ namespace api.Repositories
             await _context.Bookings.AddAsync(booking); /* dto */
             await _context.SaveChangesAsync();
 
-            return booking;             
+            return booking;
         }
 
         public async Task<IEnumerable<Booking>> GetByResourceIdAsync(int resourceId)
@@ -56,6 +56,11 @@ namespace api.Repositories
         {
             return await _context.Bookings.Where(b => b.UserId == id).ToListAsync();
 
+        }
+
+        public async Task<Booking?> DeleteBookingAsync(Booking booking)
+        {
+            throw new NotImplementedException(); /* Up for grabs */
         }
     }
 }

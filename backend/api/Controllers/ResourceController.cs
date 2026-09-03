@@ -33,4 +33,9 @@ namespace api.Controllers
             return Ok(bookings);
         }
     }
+
+    /* Elaheh */
+    /* Skriv logiken för att hämta alla resurser */
+    /* Skriv logiken för att hämta en resurs med ett specifikt id */
+    /* Skriv logiken för att hämta alla resurser med en viss 'Type' */
 }

@@ -17,4 +17,7 @@ namespace api.Data
         public DbSet<Booking> Bookings { get; set; }
         public DbSet<Resource> Resources { get; set; }
     }
+    /* Hårdkoda admin */
+    
+    /* ... */
 }

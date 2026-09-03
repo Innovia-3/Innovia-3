@@ -48,8 +48,10 @@ namespace api.Controllers
             return Ok(booking);
         }
 
+        /* Skapa DeleteBooking här. */
+
         /*   [HttpPost]
-          public async Task<IActionResult> CreateBooking([FromBody] Booking booking)
+          public async Task<IActionResult> CreateBooking([FromBody] BookingDto booking)
           {            
               if(!ModelState.IsValid)
               {
