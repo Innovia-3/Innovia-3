@@ -48,19 +48,6 @@ namespace api.Controllers
             return Ok(booking);
         }
 
-        [HttpGet("resource/{resourceId:int}")]
-        public async Task<IActionResult> GetByResourceId([FromRoute] int resourceId)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
-
-            var bookings = await _bookingRepository.GetByResourceIdAsync(resourceId);
-
-            return Ok(bookings);
-        }
-
         /*   [HttpPost]
           public async Task<IActionResult> CreateBooking([FromBody] Booking booking)
           {            
