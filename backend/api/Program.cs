@@ -2,6 +2,8 @@ using api.Data;
 using api.Interfaces;
 using api.Repositories;
 using Microsoft.EntityFrameworkCore;
+using api.Models;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,7 +20,11 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddScoped<IBookingRepository, BookingRepository>();
 builder.Services.AddScoped<IResourceRepository, ResourceRepository>();
-/* builder */
+
+builder.Services
+    .AddIdentity<User, IdentityRole>()
+    .AddEntityFrameworkStores<AppDbContext>()
+    .AddDefaultTokenProviders();
 
 var app = builder.Build();
 
