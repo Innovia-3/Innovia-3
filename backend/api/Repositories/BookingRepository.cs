@@ -55,12 +55,18 @@ namespace api.Repositories
         public async Task<IEnumerable<Booking>> GetByUserIdAsync(string id)
         {
             return await _context.Bookings.Where(b => b.UserId == id).ToListAsync();
-
         }
 
-        public async Task<Booking?> DeleteBookingAsync(Booking booking)
+        public async Task<Booking?> DeleteBookingByIdAsync(int id)
         {
-            throw new NotImplementedException(); /* Up for grabs */
+            var booking = await GetByIdAsync(id);
+            if (booking == null)
+            {
+                return null;
+            }
+            _context.Bookings.Remove(booking);
+            await _context.SaveChangesAsync();
+            return booking;
         }
     }
 }

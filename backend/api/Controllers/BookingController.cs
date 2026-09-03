@@ -48,7 +48,21 @@ namespace api.Controllers
             return Ok(booking);
         }
 
-        /* Skapa DeleteBooking här. */
+        [HttpDelete("{id:int}")]
+        public async Task<IActionResult> DeleteBookingByID([FromRoute] int id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+            var booking = await _bookingRepository.
+            DeleteBookingByIdAsync(id);
+            if (booking == null)
+            {
+                return NotFound();
+            }
+            return NoContent();
+        }
 
         /*   [HttpPost]
           public async Task<IActionResult> CreateBooking([FromBody] BookingDto booking)
