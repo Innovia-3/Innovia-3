@@ -2,9 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using api.Enums;
 using api.Interfaces;
+using api.Models;
 using api.Repositories;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualBasic;
 
 namespace api.Controllers
 {
@@ -18,6 +22,47 @@ namespace api.Controllers
         {
             _resourceRepository = resourceRepository;
             _bookingRepository = bookingRepository;
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+                }
+                var resources = await _resourceRepository.GetAllAsync();
+                return Ok(resources);
+            }
+
+        [HttpGet("{id:int}")]
+        public async Task<IActionResult> GetById([FromRoute] int id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+        
+        var resource = await _resourceRepository.GetResourceAsync(id);
+        
+        if (resource == null)
+        {
+            return NotFound();
+        }
+        return Ok(resource);
+        }
+
+[HttpGet("type/{type}")]
+        public async Task<IActionResult> GetByType([FromRoute] ResourceType type)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+        
+        var resources = await _resourceRepository.GetByTypeAsync(type);
+        
+        return Ok(resources);
         }
 
         [HttpGet("{resourceId:int}/bookings")]
