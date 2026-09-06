@@ -27,7 +27,7 @@ namespace api.Services
                 new Claim(ClaimTypes.Email, user.Email ?? string.Empty)
             };
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:key"]!));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!));
 
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
