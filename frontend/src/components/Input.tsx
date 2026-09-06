@@ -1,4 +1,5 @@
 import { useState } from "react"
+import styles from "./css/Input.module.css";
 
 type InputProps = {
     label: string;
@@ -19,29 +20,36 @@ export default function Input({
     const [showPassword, setShowPassword] = useState(false);
 
     return (
-        <div>
-            <label>
+        <div className={styles.inputGroup}>
+
+            <label className={styles.inputLabel}>
                 {label}
             </label>
 
-            <input
-                type={
-                    type === "password" && showPassword
-                    ? "text"
-                    : type
-                }
-                value={value}
-                placeholder={placeholder}
-                onChange={(event) => onChange(event.target.value)}
-            />
-            {type === "password" && (
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                  {showPassword ? "Dölj" : "Visa"}
-                </button>
-            )}
+            <div className={styles.inputWrapper}>
+                <input
+                    className={styles.inputField}
+                    type={
+                        type === "password" && showPassword
+                            ? "text"
+                            : type
+                    }
+                    value={value}
+                    placeholder={placeholder}
+                    onChange={(event) => onChange(event.target.value)}
+                />
+
+                {type === "password" && (
+                    <button
+                        className={styles.passwordButton}
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                    >
+                        {showPassword ? "Dölj" : "Visa"}
+                    </button>
+                )}
+            </div>
+
         </div>
-    )
+    );
 }
