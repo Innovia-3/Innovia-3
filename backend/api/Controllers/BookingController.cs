@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using api.Dtos.BookingDtos;
 using api.Interfaces;
+using api.Mappers;
 using api.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -64,15 +66,17 @@ namespace api.Controllers
             return NoContent();
         }
 
-        /*   [HttpPost]
-          public async Task<IActionResult> CreateBooking([FromBody] BookingDto booking)
-          {            
-              if(!ModelState.IsValid)
-              {
-                  return BadRequest();
-              }       
-              booking =  await _bookingRepository.CreateBookingAsync(booking);
-              return booking;
-          } */
+        /*  [HttpPost]
+         public async Task<IActionResult> CreateBooking([FromBody] CreateBookingDto booking)
+         {
+             /* var userId = ; 
+             if (!ModelState.IsValid)
+             {
+                 return BadRequest();
+             }
+             var bookingModel = booking.ToBookingFromCreateDto();
+             await _bookingRepository.CreateBookingAsync(bookingModel);
+             return CreatedAtAction(nameof(GetById), new { id = bookingModel.BookingId }, bookingModel.ToBookingDto());
+         } */
     }
 }
