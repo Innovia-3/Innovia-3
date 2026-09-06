@@ -16,7 +16,7 @@ namespace api.Controllers
             _userRepository = userRepository;
         }
 
-        [HttpPost("login")]
+/*         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginDto loginDto)
         {
             var user = await _userRepository.GetByEmailAsync(loginDto.Email);
@@ -33,9 +33,9 @@ namespace api.Controllers
                 return Unauthorized("Fel email eller lösenord.");
             }
 
-            /* ------ JWT token senare ------ */
+            /* ------ JWT token senare ------ 
             return Ok("Inloggning lyckades!");
-        }
+        } */
     }
 }
 
