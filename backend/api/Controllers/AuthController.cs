@@ -8,14 +8,14 @@ using Microsoft.AspNetCore.Mvc;
 namespace api.Controllers
 {
     [ApiController]
-    [Route("api/[controller]s")]
+    [Route("api/[controller]")]
 
     /* [Authorize (Roles = "Admin")] läggs till när JWT är implementerat*/
-    public class AdminController : ControllerBase
+    public class AuthController : ControllerBase
     {
         private readonly IUserRepository _userRepository;
 
-        public AdminController(IUserRepository userRepository)
+        public AuthController(IUserRepository userRepository)
         {
             _userRepository = userRepository;
         }
