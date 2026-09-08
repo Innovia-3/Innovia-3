@@ -1,0 +1,64 @@
+.resourceWrapper {
+    width: 100%;
+    max-width: 1000px;
+    padding: 24px;
+
+    background-color: var(--surface);
+
+    border: 1px solid var(--border);
+    border-radius: 0 0 6px 6px;
+
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.heading {
+    margin-bottom: 24px;
+    text-align: center;
+}
+
+.eyebrow {
+    margin: 0 0 6px;
+
+    color: var(--primary);
+
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+}
+
+.heading h2 {
+    margin: 0 0 8px;
+
+    color: var(--text);
+
+    font-size: 22px;
+}
+
+.description {
+    margin: 0;
+
+    color: var(--text-secondary);
+
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.placeholder {
+    min-height: 100px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background-color: var(--background);
+
+    border: 1px solid var(--border);
+    border-radius: 5px;
+}
+
+.placeholder p {
+    margin: 0;
+
+    color: var(--text-secondary);
+    font-size: 14px;
+}

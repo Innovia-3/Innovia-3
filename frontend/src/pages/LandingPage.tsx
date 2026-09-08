@@ -1,9 +1,13 @@
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import Navbar from "../components/Navbar";
 import styles from "./css/LandingPage.module.css";
+import Calendar from "../components/Calendar";
+import Resources from "../components/Resources";
 
 export default function LandingPage() {
     const navigate = useNavigate();
+    const [selectedDate, setSelectedDate] = useState<Date>();
 
     return (
         <>
@@ -23,6 +27,13 @@ export default function LandingPage() {
                         Gå till admin-vy
                     </button>
                 </section>
+                <div className={styles.bookingCalendarWrapper}>
+                    <Calendar
+                        selectedDate={selectedDate}
+                        onDateSelect={setSelectedDate}
+                    />
+                    <Resources />
+                </div>
             </main>
         </>
     );

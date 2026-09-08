@@ -52,7 +52,7 @@ namespace api.Controllers
             return Ok(resource);
         }
 
-        [HttpGet("type/{type}")]
+        [HttpGet("types/{type}")]
         public async Task<IActionResult> GetByType([FromRoute] ResourceType type)
         {
             if (!ModelState.IsValid)
