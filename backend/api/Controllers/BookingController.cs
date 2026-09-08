@@ -53,6 +53,7 @@ namespace api.Controllers
             {
                 return Unauthorized();
             }
+            
             var booking = await _bookingRepository.GetByIdAsync(id);
 
             if (booking == null)
