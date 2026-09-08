@@ -1,16 +1,17 @@
 .landingPage {
     min-height: calc(100vh - 80px);
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: flex-start;
+    gap: 30px;
     padding: 80px 20px 20px;
     background:
-    radial-gradient(
-        circle at top,
-        rgba(0, 153, 255, 0.12),
-        transparent 35%
-    ),
-    var(--background);
+        radial-gradient(
+            circle at top,
+            rgba(0, 153, 255, 0.12),
+            transparent 35%
+        ),
+        var(--background);
 }
 
 .welcome {
@@ -75,4 +76,13 @@
 .adminButton:active {
     color: var(--text);
     background-color: rgba(19, 133, 226, 0.05);
+}
+
+.bookingCalendarWrapper {
+    width: 100%;
+    max-width: 1000px;
+    display: flex;
+    flex-direction: column;
+    margin: 0 auto;
+    align-items: stretch;
 }
