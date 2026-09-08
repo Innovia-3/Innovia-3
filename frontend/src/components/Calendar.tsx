@@ -14,54 +14,56 @@ export default function Calendar({
     const today = new Date();
 
     //datumet bestämmer vilken vecka kalendern visar
-    const [currentDate, setCurrentDate] = useState(new Date());
+    const [displayDate, setDisplayDate] = useState(new Date());
 
-    //hittar måndagen i veckan som currentDate ligger i
-    const monday = new Date(currentDate);
+    //hittar måndagen i veckan som displayDate ligger i
+    const mondayOfWeek = new Date(displayDate);
 
-    const day = currentDate.getDay();
-    const daysFromMonday = day === 0 ? -6 : 1 - day;
+    const dayOfWeek = displayDate.getDay();
+    const daysFromMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
 
-    monday.setDate(currentDate.getDate() + daysFromMonday);
+    mondayOfWeek.setDate(displayDate.getDate() + daysFromMonday);
 
     //skapar veckans 7 dagar
     const weekDays = Array.from({ length: 7 }, (_, index) => {
-        const date = new Date(monday);
-        date.setDate(monday.getDate() + index);
+        const date = new Date(mondayOfWeek);
+        date.setDate(mondayOfWeek.getDate() + index);
 
         return date;
     });
 
     const previousWeek = () => {
-        const newDate = new Date(currentDate);
-        newDate.setDate(currentDate.getDate() - 7);
+        const newDate = new Date(displayDate);
+        newDate.setDate(displayDate.getDate() - 7);
 
-        setCurrentDate(newDate);
+        setDisplayDate(newDate);
     };
 
     const nextWeek = () => {
-        const newDate = new Date(currentDate);
-        newDate.setDate(currentDate.getDate() + 7);
+        const newDate = new Date(displayDate);
+        newDate.setDate(displayDate.getDate() + 7);
 
-        setCurrentDate(newDate);
+        setDisplayDate(newDate);
     };
 
-    const previousMonth = () => {
-        const newDate = new Date(currentDate);
+    const fistDayOfPreviousMonth = () => {
+        const newDate = new Date(displayDate);
 
+        /* tillbaka på dag 1 föregående månad för att undvika problem med olika långa månader */
         newDate.setDate(1);
         newDate.setMonth(newDate.getMonth() - 1);
 
-        setCurrentDate(newDate);
+        setDisplayDate(newDate);
     };
 
-    const nextMonth = () => {
-        const newDate = new Date(currentDate);
+    const firstDayOfNextMonth = () => {
+        const newDate = new Date(displayDate);
 
+        /* börja på dag 1 nästa månad för att undvika problem med olika långa månader */
         newDate.setDate(1);
         newDate.setMonth(newDate.getMonth() + 1);
 
-        setCurrentDate(newDate);
+        setDisplayDate(newDate);
     };
 
     return (
@@ -71,7 +73,7 @@ export default function Calendar({
                 <div className={styles.navigation}>
                     <button
                         type="button"
-                        onClick={previousMonth}
+                        onClick={fistDayOfPreviousMonth}
                         title="Previous month"
                         >
                         &lt;&lt;
@@ -86,7 +88,7 @@ export default function Calendar({
                     </button>
 
                     <h2>
-                        {currentDate.toLocaleDateString("sv-SE", {
+                        {displayDate.toLocaleDateString("sv-SE", {
                             month: "long",
                             year: "numeric"
                         })}
@@ -102,7 +104,7 @@ export default function Calendar({
 
                     <button
                         type="button"
-                        onClick={nextMonth}
+                        onClick={firstDayOfNextMonth}
                         title="Next month"
                     >
                         &gt;&gt;
