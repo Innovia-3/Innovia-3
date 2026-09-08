@@ -47,12 +47,26 @@ namespace api.Controllers
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteBookingByID([FromRoute] int id)
         {
-            var booking = await _bookingRepository.
-            DeleteBookingByIdAsync(id);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (userId == null)
+            {
+                return Unauthorized();
+            }
+            var booking = await _bookingRepository.GetByIdAsync(id);
+
             if (booking == null)
             {
                 return NotFound();
             }
+
+            if (booking.UserId != userId)
+            {
+                return Forbid();
+            }
+
+            await _bookingRepository.DeleteBookingByIdAsync(id);
+
             return NoContent();
         }
 
