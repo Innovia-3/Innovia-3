@@ -18,6 +18,6 @@ namespace api.Data
         public DbSet<Resource> Resources { get; set; }
     }
     /* Hårdkoda admin */
-    
+
     /* ... */
 }
