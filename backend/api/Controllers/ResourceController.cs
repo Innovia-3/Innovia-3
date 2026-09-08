@@ -30,10 +30,10 @@ namespace api.Controllers
             if (!ModelState.IsValid)
             {
                 return BadRequest();
-                }
-                var resources = await _resourceRepository.GetAllAsync();
-                return Ok(resources);
             }
+            var resources = await _resourceRepository.GetAllAsync();
+            return Ok(resources);
+        }
 
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetById([FromRoute] int id)
@@ -42,27 +42,27 @@ namespace api.Controllers
             {
                 return BadRequest();
             }
-        
-        var resource = await _resourceRepository.GetResourceAsync(id);
-        
-        if (resource == null)
-        {
-            return NotFound();
-        }
-        return Ok(resource);
+
+            var resource = await _resourceRepository.GetResourceAsync(id);
+
+            if (resource == null)
+            {
+                return NotFound();
+            }
+            return Ok(resource);
         }
 
-[HttpGet("types/{type}")]
+        [HttpGet("types/{type}")]
         public async Task<IActionResult> GetByType([FromRoute] ResourceType type)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
-        
-        var resources = await _resourceRepository.GetByTypeAsync(type);
-        
-        return Ok(resources);
+
+            var resources = await _resourceRepository.GetByTypeAsync(type);
+
+            return Ok(resources);
         }
 
         [HttpGet("{resourceId:int}/bookings")]
