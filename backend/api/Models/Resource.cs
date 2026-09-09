@@ -11,7 +11,6 @@ namespace api.Models
     {
         public int ResourceId { get; set; }
         public ResourceType ResourceType { get; set; }
-
         private int _timeSlotTimeInHours;
         public int TimeSlotTimeInHours
         {
@@ -35,7 +34,6 @@ namespace api.Models
                     case ResourceType.AIServer:
                         TimeSlotTimeInHours = 1;
                         break;
-
                     default:
                         TimeSlotTimeInHours = 1;
                         break;
