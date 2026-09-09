@@ -32,6 +32,21 @@ export default function Calendar({
         return date;
     });
 
+    const getFirstMondayOfMonth = (year: number, month: number) => {
+        const date = new Date(year, month, 1);
+
+        const dayOfWeek = date.getDay();
+
+        const daysUntilMonday =
+            dayOfWeek === 0
+                ? 1
+                : (8 - dayOfWeek) % 7;
+
+        date.setDate(date.getDate() + daysUntilMonday);
+
+        return date;
+    };
+
     const previousWeek = () => {
         const newDate = new Date(displayDate);
         newDate.setDate(displayDate.getDate() - 7);
@@ -46,23 +61,21 @@ export default function Calendar({
         setDisplayDate(newDate);
     };
 
-    const fistDayOfPreviousMonth = () => {
-        const newDate = new Date(displayDate);
-
-        /* tillbaka på dag 1 föregående månad för att undvika problem med olika långa månader */
-        newDate.setDate(1);
-        newDate.setMonth(newDate.getMonth() - 1);
-
+    const previousMonth = () => {
+        const newDate = getFirstMondayOfMonth(
+            mondayOfWeek.getFullYear(),
+            mondayOfWeek.getMonth() - 1
+        );
+    
         setDisplayDate(newDate);
     };
-
-    const firstDayOfNextMonth = () => {
-        const newDate = new Date(displayDate);
-
-        /* börja på dag 1 nästa månad för att undvika problem med olika långa månader */
-        newDate.setDate(1);
-        newDate.setMonth(newDate.getMonth() + 1);
-
+    
+    const nextMonth = () => {
+        const newDate = getFirstMondayOfMonth(
+            mondayOfWeek.getFullYear(),
+            mondayOfWeek.getMonth() + 1
+        );
+    
         setDisplayDate(newDate);
     };
 
@@ -73,7 +86,7 @@ export default function Calendar({
                 <div className={styles.navigation}>
                     <button
                         type="button"
-                        onClick={fistDayOfPreviousMonth}
+                        onClick={previousMonth}
                         title="Previous month"
                         >
                         &lt;&lt;
@@ -88,7 +101,7 @@ export default function Calendar({
                     </button>
 
                     <h2>
-                        {displayDate.toLocaleDateString("sv-SE", {
+                        {mondayOfWeek.toLocaleDateString("sv-SE", {
                             month: "long",
                             year: "numeric"
                         })}
@@ -104,7 +117,7 @@ export default function Calendar({
 
                     <button
                         type="button"
-                        onClick={firstDayOfNextMonth}
+                        onClick={nextMonth}
                         title="Next month"
                     >
                         &gt;&gt;
@@ -146,9 +159,19 @@ export default function Calendar({
                                 })}
                             </span>
 
+
                             <span className={styles.dayNumber}>
                                 {date.getDate()}
                             </span>
+                            
+                            {/* skriver månaden på varje första dag i månaden */}
+                            {date.getDate() === 1 && (
+                                <span className={styles.monthName}>
+                                    {date.toLocaleDateString("sv-SE", {
+                                        month: "short"
+                                    }).replace(".", "")}
+                                </span>
+                            )}
                         </button>
                     );
                 })}
