@@ -23,19 +23,19 @@ namespace api.Models
                 switch (ResourceType)
                 {
                     case ResourceType.Skrivbord:
-                        TimeSlotTimeInHours = 3;
+                        _timeSlotTimeInHours = 3;
                         break;
                     case ResourceType.Mötesrum:
-                        TimeSlotTimeInHours = 3;
+                        _timeSlotTimeInHours = 3;
                         break;
                     case ResourceType.VRHeadset:
-                        TimeSlotTimeInHours = 1;
+                        _timeSlotTimeInHours = 1;
                         break;
                     case ResourceType.AIServer:
-                        TimeSlotTimeInHours = 1;
+                        _timeSlotTimeInHours = 1;
                         break;
                     default:
-                        TimeSlotTimeInHours = 1;
+                        _timeSlotTimeInHours = 1;
                         break;
                 }
             }
