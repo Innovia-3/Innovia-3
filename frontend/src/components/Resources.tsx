@@ -1,18 +1,67 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "./css/Resources.module.css";
 
-export default function Resources() {
-    const [selectedResource, setSelectedResource] = useState<string | null>(null);
+/* hur en resurs från backend ser ut */
+type Resource = {
+    resourceId: number;
+    resourceType: number;
+};
 
-    const resources = [
-        "Drop-in Skrivbord",
-        "Mötesrum",
-        "VR-Headset",
-        "AI-Server"
+export default function Resources() {
+    const [resources, setResources] = useState<Resource[]>([]);
+    const [selectedResourceType, setSelectedResourceType] = useState<number | null>(null);
+
+    useEffect(() => {
+        const fetchResources = async () => {
+            try {
+                console.log("Hämtar resurser från backend...");
+            
+                /* anropar GET /api/Resources i backend */
+                const response = await fetch(
+                    "http://localhost:5197/api/Resources"
+                );
+            
+                console.log("Svar från backend:", response.status);
+            
+                if (!response.ok) {
+                    throw new Error("Kunde inte hämta resurser");
+                }
+            
+                const data = await response.json();
+            
+                console.log("Resurser från backend:", data);
+            
+                setResources(data);
+            } catch (error) {
+                console.error("Fel vid hämtning av resurser:", error);
+            }
+        };
+    
+        fetchResources();
+    }, []);
+
+    /* tar fram unika resurstyper */
+    const resourceTypes = [
+        ...new Set(resources.map((resource) => resource.resourceType))
     ];
 
+    /* gör backendens enum-värden till text som visas för användaren */
+    const getResourceName = (resourceType: number) => {
+        switch (resourceType) {
+            case 1:
+                return "Drop-in Skrivbord";
+            case 2:
+                return "Mötesrum";
+            case 3:
+                return "VR-Headset";
+            case 4:
+                return "AI-Server";
+            default:
+                return "Okänd resurs";
+        }
+    };
+
     return (
-        <>
         <section className={styles.resourcesWrapper}>
             <div className={styles.heading}>
                 <p className={styles.eyebrow}>
@@ -22,33 +71,40 @@ export default function Resources() {
 
             <div className={styles.placeholder}>
                 <div className={styles.resourceButtonWrapper}>
-                    {resources.map((resource) => (
+                    {resourceTypes.map((resourceType) => (
                         <button
-                            key={resource}
+                            key={resourceType}
                             type="button"
                             className={
-                                selectedResource === resource
+                                selectedResourceType === resourceType
                                     ? styles.selected
                                     : ""
                             }
-                            onClick={() => setSelectedResource(resource)}>
+                            onClick={() => {
+                                setSelectedResourceType(resourceType);
 
-                            <span>{resource}</span>
+                                console.log(
+                                    "Vald resurstyp:",
+                                    resourceType,
+                                    getResourceName(resourceType)
+                                );
+                            }}>
+
+                            <span>{getResourceName(resourceType)}</span>
                             
                             <span
                                 className={`${styles.selectCircle} ${
-                                    selectedResource === resource
+                                    selectedResourceType === resourceType
                                         ? styles.circleSelected
                                         : ""
                                 }`}
                             >
-                                {selectedResource === resource ? "✓" : ""}
+                                {selectedResourceType === resourceType ? "✓" : ""}
                             </span>
                         </button>
                     ))}
                 </div>
             </div>
         </section>
-        </>
     );
 }

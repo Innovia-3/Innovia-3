@@ -60,7 +60,7 @@ export default function Calendar({
 
         setDisplayDate(newDate);
     };
-
+ 
     const previousMonth = () => {
         const newDate = getFirstMondayOfMonth(
             mondayOfWeek.getFullYear(),
