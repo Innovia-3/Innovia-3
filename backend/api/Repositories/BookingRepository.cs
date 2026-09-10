@@ -37,7 +37,7 @@ namespace api.Repositories
         {
             var alreadyBooked = await IsResourceAvailableAsync(booking.StartTime, booking.EndTime, booking.ResourceId);
 
-            if (alreadyBooked)
+            if (!alreadyBooked)
             {
                 return null;
             }
