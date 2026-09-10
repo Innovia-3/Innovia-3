@@ -76,6 +76,7 @@
 .day {
     min-width: 0;
     min-height: 100px;
+    position: relative;
 
     display: flex;
     flex-direction: column;
@@ -137,6 +138,13 @@
 
 .today .dayNumber {
     color: var(--primary);
+}
+
+.monthName {
+    position: absolute;
+    bottom: 9px;
+    font-size: 12px;
+    text-transform: capitalize;
 }
 
 @media (max-width: 600px) {
