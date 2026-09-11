@@ -63,7 +63,7 @@ namespace api.Controllers
                 return Unauthorized("Fel email eller lösenord.");
             }
 
-            var token = _tokenService.CreateToken(user);
+            var token = await _tokenService.CreateToken(user);
 
             return Ok(new { token });
         }
