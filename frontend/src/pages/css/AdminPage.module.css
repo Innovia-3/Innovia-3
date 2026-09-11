@@ -1,8 +1,8 @@
 .adminPage {
     min-height: calc(100vh - 80px);
     display: flex;
-    justify-content: center;
     align-items: flex-start;
+    flex-direction: column;
     padding: 80px 20px 20px;
     background:
     radial-gradient(
@@ -13,9 +13,19 @@
     var(--background);
 }
 
+.adminBookingViewWrapper {
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+    gap: 20px;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
 .admin {
     width: 100%;
-    max-width: 700px;
+    max-width: 1100px;
     margin: 0 auto;
     padding: 40px;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -74,4 +84,14 @@
 .landingButton:active {
     color: var(--text);
     background-color: rgba(19, 133, 226, 0.05);
+}
+
+.resourceStatusAndUserListWrapper {
+    width: 100%;
+    max-width: 1100px;
+    margin: 20px auto 0;
+
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
 }
