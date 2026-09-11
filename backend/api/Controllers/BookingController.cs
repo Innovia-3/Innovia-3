@@ -28,7 +28,7 @@ namespace api.Controllers
         {
             var bookings = await _bookingRepository.GetAllAsync();
 
-            return Ok(bookings);
+            return Ok(bookings.Select(b => b.ToBookingDto()));
         }
 
         [HttpGet("{id:int}")]
@@ -41,7 +41,7 @@ namespace api.Controllers
                 return NotFound();
             }
 
-            return Ok(booking);
+            return Ok(booking.ToBookingDto());
         }
 
         [HttpDelete("{id:int}")]
@@ -53,7 +53,7 @@ namespace api.Controllers
             {
                 return Unauthorized();
             }
-            
+
             var booking = await _bookingRepository.GetByIdAsync(id);
 
             if (booking == null)
