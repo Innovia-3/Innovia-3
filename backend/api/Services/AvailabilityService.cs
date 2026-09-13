@@ -18,6 +18,22 @@ namespace api.Services
             _resourceRepository = resourceRepository; 
         }
 
-        
+        public async Task<ResourceAvailabilityDto?> GetResourceAvailabilityAsync(int resourceId, DateTime startTime, DateTime endTime)
+        {
+            var resource = await _resourceRepository.GetResourceAsync(resourceId); 
+
+            if (resource == null)
+            {
+                return null;
+            }
+
+            var isAvailable = await _bookingRepository.IsResourceAvailableAsync(startTime, endTime, resourceId);
+
+            return new ResourceAvailabilityDto
+            {
+                ResourceId = resourceId,
+                IsAvailable = isAvailable
+            };
+        }
     }
 }
