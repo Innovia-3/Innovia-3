@@ -2,6 +2,7 @@ using api.Dtos.UserDtos;
 using api.Interfaces;
 using api.Models;
 using api.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace api.Controllers
@@ -21,6 +22,7 @@ namespace api.Controllers
             _tokenService = tokenService;
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost("register")]
         public async Task<IActionResult> Register(RegisterUserDto registerUserDto)
         {

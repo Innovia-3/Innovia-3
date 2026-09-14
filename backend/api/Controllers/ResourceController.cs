@@ -6,6 +6,7 @@ using api.Enums;
 using api.Interfaces;
 using api.Models;
 using api.Repositories;
+using api.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualBasic;
@@ -18,10 +19,12 @@ namespace api.Controllers
     {
         private readonly IResourceRepository _resourceRepository;
         private readonly IBookingRepository _bookingRepository;
-        public ResourceController(IResourceRepository resourceRepository, IBookingRepository bookingRepository)
+        private readonly AvailabilityService _availabilityService;
+        public ResourceController(IResourceRepository resourceRepository, IBookingRepository bookingRepository, AvailabilityService availabilityService)
         {
             _resourceRepository = resourceRepository;
             _bookingRepository = bookingRepository;
+            _availabilityService = availabilityService;
         }
 
         [HttpGet]
@@ -76,6 +79,37 @@ namespace api.Controllers
             var bookings = await _bookingRepository.GetByResourceIdAsync(resourceId);
 
             return Ok(bookings);
+        }
+
+        [HttpGet("{id:int}/availability")]
+        public async Task<IActionResult> GetAvailabilityById(int id, [FromQuery] DateTime startTime, [FromQuery] DateTime endTime)
+        {
+            if (startTime >= endTime)
+            {
+                return BadRequest("Starttiden måste vara lägre än sluttiden");
+            }
+
+            var availability = await _availabilityService.GetResourceAvailabilityAsync(id, startTime, endTime);
+
+            if (availability == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(availability);
+        }
+
+        [HttpGet("types/{type}/availability")]
+        public async Task<IActionResult> GetAvailabilityByType(ResourceType type, [FromQuery] DateTime startTime, [FromQuery] DateTime endTime)
+        {
+            if (startTime >= endTime)
+            {
+                return BadRequest("Starttiden måste vara lägre än sluttiden");
+            }
+
+            var availability = await _availabilityService.GetResourceTypeAvailabilityAsync(type, startTime, endTime);
+
+            return Ok(availability);
         }
     }
 

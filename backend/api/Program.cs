@@ -65,6 +65,7 @@ builder.Services.AddScoped<IBookingRepository, BookingRepository>();
 builder.Services.AddScoped<IResourceRepository, ResourceRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<TokenService>();
+builder.Services.AddScoped<AvailabilityService>();
 
 builder.Services
     .AddIdentity<User, IdentityRole>()
@@ -97,7 +98,7 @@ builder.Services.AddAuthentication(options =>
             )
         )
     };
-}); 
+});
 
 builder.Services.AddCors(options =>
 {
