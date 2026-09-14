@@ -86,6 +86,30 @@ namespace api.Controllers
                 return BadRequest("Starttid måste vara före sluttid.");
             }
 
+            /* tolka inskickade tider till svensk tid */
+            var swedishTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Europe/Stockholm");
+
+            var startLocal = DateTime.SpecifyKind(
+                booking.StartTime,
+                DateTimeKind.Unspecified
+            );
+
+            var endLocal = DateTime.SpecifyKind(
+                booking.EndTime,
+                DateTimeKind.Unspecified 
+            );
+
+            /* konvertera svensk tid till UTC innan bokningen sparas */
+            booking.StartTime = TimeZoneInfo.ConvertTimeToUtc(
+                startLocal,
+                swedishTimeZone
+            );
+
+            booking.EndTime = TimeZoneInfo.ConvertTimeToUtc(
+                endLocal,
+                swedishTimeZone
+            );
+
             var bookingModel = booking.ToBookingFromCreateDto(userId);
 
             var createdBooking = await _bookingRepository.CreateBookingAsync(bookingModel);
@@ -95,7 +119,13 @@ namespace api.Controllers
                 return Conflict("Kan inte boka vid denna tiden.");
             }
 
-            return CreatedAtAction(nameof(GetById), new { id = createdBooking.BookingId }, createdBooking.ToBookingDto());
+            var fullBooking = await _bookingRepository.GetByIdAsync(createdBooking.BookingId);
+
+            return CreatedAtAction(
+                nameof(GetById),
+                new { id = createdBooking.BookingId },
+                fullBooking!.ToBookingDto()
+            );
         }
     }
 }

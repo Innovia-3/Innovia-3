@@ -17,7 +17,9 @@ namespace api.Mappers
                 StartTime = bookingModel.StartTime,
                 EndTime = bookingModel.EndTime,
                 ResourceId = bookingModel.ResourceId,
-                UserId = bookingModel.UserId
+                ResourceType = bookingModel.Resource?.ResourceType.ToString() ?? "Okänd resurs",
+                UserId = bookingModel.UserId,
+                UserEmail = bookingModel.User?.Email ?? "Okänd användare"
             };
         }
         public static Booking ToBookingFromCreateDto(this CreateBookingDto bookingRequestDto, string userId)

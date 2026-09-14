@@ -19,11 +19,17 @@ namespace api.Repositories
         }
         public async Task<IEnumerable<Booking>> GetAllAsync()
         {
-            return await _context.Bookings.ToListAsync();
+            return await _context.Bookings
+                .Include(b => b.Resource)
+                .Include(b => b.User)
+                .ToListAsync();
         }
         public async Task<Booking?> GetByIdAsync(int id)
         {
-            return await _context.Bookings.FirstOrDefaultAsync(b => b.BookingId == id);
+            return await _context.Bookings
+                .Include(b => b.Resource)
+                .Include(b => b.User)
+                .FirstOrDefaultAsync(b => b.BookingId == id);
         }
 
         public async Task<bool> IsResourceAvailableAsync(DateTime startTime, DateTime endTime, int resourceId)

@@ -75,16 +75,47 @@ button:active {
     color: var(--primary);
 }
 
-.info ul {
+.info {
     width: 100%;
-    margin: 0;
-    padding: 0;
     margin-bottom: 10px;
+
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
+    align-items: center;
+
     font-weight: 100;
     font-size: 15px;
-    list-style: none;
+
     color: rgba(255, 255, 255, 0.4);
+}
+
+.bookingRow {
+    width: 100%;
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    padding: 1rem 0;
+
+    color: var(--text);
+    font-size: 14px;
+
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.resource {
+    width: 25%;
+}
+
+.user {
+    width: 30%;
+}
+
+.date {
+    width: 25%;
+}
+
+.time {
+    width: 20%;
 }
