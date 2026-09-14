@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import styles from "./css/Bookings.module.css";
+import * as signalR from "@microsoft/signalr";
 
 type Booking = {
     bookingId: number;
@@ -15,6 +16,11 @@ export default function Bookings() {
     const [bookings, setBookings] = useState<Booking[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
+    const connection = new signalR.HubConnectionBuilder().withUrl("http://localhost:5173/booking").build();
+
+    connection.on("BookingsChanged", function(){
+        ;
+    });
 
     useEffect(() => {
         async function getBookings() {
