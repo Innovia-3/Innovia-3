@@ -9,6 +9,8 @@ using api.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.SignalR;
+using api.Hubs;
 
 namespace api.Controllers
 {
@@ -18,9 +20,11 @@ namespace api.Controllers
     public class BookingController : ControllerBase
     {
         private readonly IBookingRepository _bookingRepository;
-        public BookingController(IBookingRepository bookingRepository)
+        private readonly IHubContext<BookingHub> _hubContext;
+        public BookingController(IBookingRepository bookingRepository, IHubContext<BookingHub> hubContext)
         {
             _bookingRepository = bookingRepository;
+            _hubContext = hubContext;
         }
 
         [HttpGet]
@@ -67,7 +71,7 @@ namespace api.Controllers
             }
 
             await _bookingRepository.DeleteBookingByIdAsync(id);
-
+            await _hubContext.Clients.All.SendAsync("BookingsChange");
             return NoContent();
         }
 
@@ -120,6 +124,8 @@ namespace api.Controllers
             }
 
             var fullBooking = await _bookingRepository.GetByIdAsync(createdBooking.BookingId);
+
+            await _hubContext.Clients.All.SendAsync("BookingsChange");
 
             return CreatedAtAction(
                 nameof(GetById),
