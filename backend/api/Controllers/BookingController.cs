@@ -44,10 +44,12 @@ namespace api.Controllers
             return Ok(booking.ToBookingDto());
         }
 
+        [Authorize]
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> DeleteBookingByID([FromRoute] int id)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var isAdmin = User.IsInRole("Admin");
 
             if (userId == null)
             {
@@ -61,7 +63,7 @@ namespace api.Controllers
                 return NotFound();
             }
 
-            if (booking.UserId != userId)
+            if (booking.UserId != userId && !isAdmin)
             {
                 return Forbid();
             }
@@ -96,7 +98,7 @@ namespace api.Controllers
 
             var endLocal = DateTime.SpecifyKind(
                 booking.EndTime,
-                DateTimeKind.Unspecified 
+                DateTimeKind.Unspecified
             );
 
             /* konvertera svensk tid till UTC innan bokningen sparas */
