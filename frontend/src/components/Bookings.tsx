@@ -17,11 +17,13 @@ export default function Bookings() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [showAll, setShowAll] = useState(false);
-  const connection = new signalR.HubConnectionBuilder()
-    .withUrl("http://localhost:5173/booking")
-    .build();
+  // const connection = new signalR.HubConnectionBuilder()
+  //   .withUrl("http://localhost:5197/Hubs/Booking")
+  //   .build();
 
-  connection.on("BookingsChanged", function () {});
+  // connection.on("BookingsChanged", () => {
+  //   console.log("Hallo from connection!");
+  // });
 
   useEffect(() => {
     async function getBookings() {
@@ -80,6 +82,32 @@ export default function Bookings() {
     }
 
     getBookings();
+
+    const connection = new signalR.HubConnectionBuilder()
+    .withUrl("http://localhost:5197/Hubs/Booking")
+    .withAutomaticReconnect()
+    .build();
+
+    connection.on("BookingsChanged", () => {
+      getBookings();
+    });
+
+    connection
+    .start()
+    .then(() => {
+      console.log("SignalR ansluten!");
+    })
+    .catch((error) => {
+      if (error instanceof Error && error.message.includes("stopped during negotiation")) {
+        return;
+      }
+
+      console.error("SignalR-fel:", error);
+    });
+
+    return () => {
+      connection.stop();
+    };
   }, []);
 
   function formatDate(dateString: string) {

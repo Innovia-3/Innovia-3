@@ -85,7 +85,7 @@ namespace api.Controllers
             }
 
             await _bookingRepository.DeleteBookingByIdAsync(id);
-            await _hubContext.Clients.All.SendAsync("BookingsChange");
+            await _hubContext.Clients.All.SendAsync("BookingsChanged");
             return NoContent();
         }
 
@@ -139,7 +139,7 @@ namespace api.Controllers
 
             var fullBooking = await _bookingRepository.GetByIdAsync(createdBooking.BookingId);
 
-            await _hubContext.Clients.All.SendAsync("BookingsChange");
+            await _hubContext.Clients.All.SendAsync("BookingsChanged");
 
             return CreatedAtAction(
                 nameof(GetById),
