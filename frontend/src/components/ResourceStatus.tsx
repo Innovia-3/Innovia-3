@@ -1,34 +1,61 @@
 import { useEffect, useState } from "react";
 import styles from "./css/ResourceStatus.module.css";
 
-type Resource = {
-    resourceId: number;
+type ResourceAvailability = {
     resourceType: number;
+    totalResources: number;
+    availableResources: number;
 };
 
 export default function ResourceStatus() {
-    const [resources, setResources] = useState<Resource[]>([]);
+    const [resourceStatus, setResourceStatus] = useState<ResourceAvailability[]>([]);
 
     useEffect(() => {
-        const fetchResources = async () => {
+        const fetchResourceStatus = async () => {
             try {
-                const response = await fetch(
-                    "http://localhost:5197/api/Resources"
+                const resourceTypes = [1, 2, 3, 4];
+
+                const startTime = new Date();
+
+                const endTime = new Date(
+                    startTime.getTime() + 60 * 60 * 1000
                 );
 
-                if (!response.ok) {
-                    throw new Error("Kunde inte hämta resurser");
-                }
+                const requests = resourceTypes.map(
+                    async (resourceType) => {
+                        const response = await fetch(
+                            `http://localhost:5197/api/Resources/types/${resourceType}/availability` +
+                            `?startTime=${startTime.toISOString()}` +
+                            `&endTime=${endTime.toISOString()}`
+                        );
 
-                const data = await response.json();
+                        if (!response.ok) {
+                            throw new Error(
+                                `Kunde inte hämta tillgänglighet för resurstyp ${resourceType}`
+                            );
+                        }
 
-                setResources(data);
+                        const data: ResourceAvailability =
+                            await response.json();
+
+                        return data;
+                    }
+                );
+
+                const data = await Promise.all(requests);
+
+                console.log("Resursstatus:", data);
+
+                setResourceStatus(data);
             } catch (error) {
-                console.error("Fel vid hämtning av resurser:", error);
+                console.error(
+                    "Fel vid hämtning av resursstatus:",
+                    error
+                );
             }
         };
 
-        fetchResources();
+        fetchResourceStatus();
     }, []);
 
     const getResourceName = (resourceType: number) => {
@@ -46,14 +73,6 @@ export default function ResourceStatus() {
         }
     };
 
-    const getResourceCount = (resourceType: number) => {
-        return resources.filter(
-            (resource) => resource.resourceType === resourceType
-        ).length;
-    };
-
-    const resourceTypes = [1, 2, 3, 4];
-
     return (
         <section className={styles.resourceStatus}>
             <p className={styles.eyebrow}>
@@ -61,30 +80,44 @@ export default function ResourceStatus() {
             </p>
 
             <div className={styles.statusCards}>
-                {resourceTypes.map((resourceType) => (
+                {resourceStatus.map((resource) => (
                     <div
-                        key={resourceType}
+                        key={resource.resourceType}
                         className={styles.statusCard}
                     >
                         <div>
-                            <h3>{getResourceName(resourceType)}</h3>
+                            <h3>
+                                {getResourceName(resource.resourceType)}
+                            </h3>
 
                             <p>
-                                {getResourceCount(resourceType)} st totalt
+                                {resource.totalResources} st totalt
                             </p>
                         </div>
 
-                        {/* dummy-visualisering för tillgänglighet */}
                         <div className={styles.availability}>
                             <span className={styles.statusDot}></span>
 
                             <span>
-                                Dummy tillgänglighet
+                                {resource.availableResources} st tillgängliga
                             </span>
                         </div>
 
                         <div className={styles.progressBar}>
-                            <div className={styles.progress}></div>
+                            <div
+                                className={styles.progress}
+                                style={{
+                                    width:
+                                        resource.totalResources === 0
+                                            ? "0%"
+                                            : `${
+                                                (
+                                                    resource.availableResources /
+                                                    resource.totalResources
+                                                ) * 100
+                                            }%`
+                                }}
+                            ></div>
                         </div>
                     </div>
                 ))}
