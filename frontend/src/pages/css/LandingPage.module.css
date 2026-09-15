@@ -101,3 +101,46 @@
     flex: 1;
     min-width: 0;
 }
+.bookingAction {
+    margin-top: 20px;
+    padding: 20px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--surface);
+}
+
+.bookingAction p {
+    margin: 0 0 12px;
+    color: var(--text);
+}
+
+.bookingAction button {
+    width: 100%;
+    padding: 13px;
+    border: 1px solid var(--primary);
+    border-radius: 4px;
+    background: var(--primary);
+    color: white;
+    cursor: pointer;
+}
+
+.bookingAction button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.successMessage,
+.errorMessage {
+    margin-top: 15px;
+    padding: 14px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+}
+
+.successMessage {
+    color: var(--text);
+}
+
+.errorMessage {
+    color: var(--text);
+}
