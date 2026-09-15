@@ -1,5 +1,6 @@
 using api.Dtos.UserDtos;
 using api.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,26 +17,20 @@ namespace api.Controllers
             _userRepository = userRepository;
         }
 
-/*         [HttpPost("login")]
-        public async Task<IActionResult> Login(LoginDto loginDto)
+        [Authorize(Roles = "Admin")]
+        [HttpGet]
+        public async Task<IActionResult> GetAllUsers()
         {
-            var user = await _userRepository.GetByEmailAsync(loginDto.Email);
+            var users = await _userRepository.GetAllAsync();
 
-            if (user == null)
+            var userDtos = users.Select(user => new UserDto
             {
-                return Unauthorized("Fel email elelr lösenord");
-            }
+                UserId = user.Id,
+                Email = user.Email ?? string.Empty
+            });
 
-            var passwordCorrect = await _userRepository.CheckPasswordAsync(user, loginDto.Password);
-
-            if (!passwordCorrect)
-            {
-                return Unauthorized("Fel email eller lösenord.");
-            }
-
-            /* ------ JWT token senare ------ 
-            return Ok("Inloggning lyckades!");
-        } */
+            return Ok(userDtos);
+        }
     }
 }
 

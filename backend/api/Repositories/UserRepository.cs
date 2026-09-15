@@ -1,6 +1,7 @@
 using api.Interfaces;
 using api.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace api.Repositories
 {
@@ -34,6 +35,11 @@ namespace api.Repositories
 
             /* returnerar true om användare lyckas skapas */
             return result.Succeeded;
+        }
+
+        public async Task<List<User>> GetAllAsync()
+        {
+            return await _userManager.Users.ToListAsync();
         }
     }
 }
