@@ -145,7 +145,7 @@ export default function Bookings() {
   const visibleBookings = showAll ? bookings : bookings.slice(0, 5);
 
   return (
-    <section className={styles.bookingsWrapper}>
+    <section id="bookings" className={styles.bookingsWrapper}>
       <div className={styles.heading}>
         <div className={styles.headerAndButton}>
           <p className={styles.eyebrow}>Bokningar</p>
