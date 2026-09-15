@@ -4,6 +4,6 @@ namespace api.Hubs
 {
  public class BookingHub : Hub
     {
-    
+
     }
 }

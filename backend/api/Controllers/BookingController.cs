@@ -35,6 +35,20 @@ namespace api.Controllers
             return Ok(bookings.Select(b => b.ToBookingDto()));
         }
 
+[HttpGet("mine")]
+public async Task<IActionResult> GetMyBookings()
+{
+    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+    if (userId == null)
+    {
+        return Unauthorized();
+    }
+
+    var bookings = await _bookingRepository.GetByUserIdAsync(userId);
+
+    return Ok(bookings.Select(b => b.ToBookingDto()));
+}
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetById([FromRoute] int id)
         {
