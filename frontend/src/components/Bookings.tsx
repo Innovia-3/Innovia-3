@@ -15,6 +15,7 @@ export default function Bookings() {
     const [bookings, setBookings] = useState<Booking[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
+    const [showAll, setShowAll] = useState(false);
 
     useEffect(() => {
         async function getBookings() {
@@ -86,17 +87,28 @@ export default function Bookings() {
         });
     }
 
+    const visibleBookings = showAll
+        ? bookings
+        : bookings.slice(0, 5);
+
     return (
         <section className={styles.bookingsWrapper}>
             <div className={styles.heading}>
                 <div className={styles.headerAndButton}>
                     <p className={styles.eyebrow}>
-                        Mina bokningar
+                        Bokningar
                     </p>
 
-                    <button type="button">
-                        Visa alla bokningar →
-                    </button>
+                    {bookings.length > 5 && (
+                        <button
+                            type="button"
+                            onClick={() => setShowAll(!showAll)}
+                        >
+                            {showAll
+                                ? "Visa färre bokningar ↑"
+                                : "Visa alla bokningar →"}
+                        </button>
+                    )}
                 </div>
 
                 <div className={styles.info}>
@@ -127,7 +139,7 @@ export default function Bookings() {
 
             {!loading && !error && bookings.length > 0 && (
                 <div className={styles.bookingList}>
-                    {bookings.map((booking) => (
+                    {visibleBookings.map((booking) => (
                         <div
                             key={booking.bookingId}
                             className={styles.bookingRow}
