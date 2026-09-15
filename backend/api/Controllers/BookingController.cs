@@ -35,20 +35,20 @@ namespace api.Controllers
             return Ok(bookings.Select(b => b.ToBookingDto()));
         }
 
-[HttpGet("mine")]
-public async Task<IActionResult> GetMyBookings()
-{
-    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        [HttpGet("mine")]
+        public async Task<IActionResult> GetMyBookings()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-    if (userId == null)
-    {
-        return Unauthorized();
-    }
+            if (userId == null)
+            {
+                return Unauthorized();
+            }
 
-    var bookings = await _bookingRepository.GetByUserIdAsync(userId);
+            var bookings = await _bookingRepository.GetByUserIdAsync(userId);
 
-    return Ok(bookings.Select(b => b.ToBookingDto()));
-}
+            return Ok(bookings.Select(b => b.ToBookingDto()));
+        }
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetById([FromRoute] int id)
         {
@@ -114,7 +114,7 @@ public async Task<IActionResult> GetMyBookings()
 
             var endLocal = DateTime.SpecifyKind(
                 booking.EndTime,
-                DateTimeKind.Unspecified 
+                DateTimeKind.Unspecified
             );
 
             /* konvertera svensk tid till UTC innan bokningen sparas */
