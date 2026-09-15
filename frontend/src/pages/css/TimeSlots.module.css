@@ -1,0 +1,29 @@
+.timeSlotList {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.timeSlotList button {
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background: var(--surface);
+    color: var(--text);
+    cursor: pointer;
+}
+
+.timeSlotList button:hover:not(:disabled) {
+    border-color: var(--primary);
+}
+
+.timeSlotList button.selected {
+    border-color: var(--primary);
+    background-color: rgba(21, 151, 255, 0.1);
+}
+
+.timeSlotList button.disabled,
+.timeSlotList button:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}

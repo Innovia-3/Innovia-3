@@ -29,7 +29,7 @@ export default function Bookings() {
                 }
 
                 const response = await fetch(
-                    "http://localhost:5197/api/Bookings",
+                    "http://localhost:5197/api/Bookings/mine",
                     {
                         method: "GET",
                         headers: {
@@ -91,7 +91,7 @@ export default function Bookings() {
             <div className={styles.heading}>
                 <div className={styles.headerAndButton}>
                     <p className={styles.eyebrow}>
-                        Bokningar
+                        Mina bokningar
                     </p>
 
                     <button type="button">

@@ -59,9 +59,13 @@ namespace api.Repositories
         }
 
         public async Task<IEnumerable<Booking>> GetByUserIdAsync(string id)
-        {
-            return await _context.Bookings.Where(b => b.UserId == id).ToListAsync();
-        }
+{
+    return await _context.Bookings
+        .Include(b => b.Resource)
+        .Include(b => b.User)
+        .Where(b => b.UserId == id)
+        .ToListAsync();
+}
 
         public async Task<Booking?> DeleteBookingByIdAsync(int id)
         {
