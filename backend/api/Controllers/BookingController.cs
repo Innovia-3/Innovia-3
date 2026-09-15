@@ -107,6 +107,22 @@ namespace api.Controllers
             /* tolka inskickade tider till svensk tid */
             var swedishTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Europe/Stockholm");
 
+            var swedishNow = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, swedishTimeZone);
+
+            var currentHour = new DateTime(
+                swedishNow.Year,
+                swedishNow.Month,
+                swedishNow.Day,
+                swedishNow.Hour,
+                0,
+                0
+            );
+
+            if (booking.StartTime < currentHour)
+            {
+                return BadRequest("Det går inte att boka en tid som redan passerat.");
+            }
+
             var startLocal = DateTime.SpecifyKind(
                 booking.StartTime,
                 DateTimeKind.Unspecified
