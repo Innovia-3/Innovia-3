@@ -41,5 +41,10 @@ namespace api.Repositories
         {
             return await _userManager.Users.ToListAsync();
         }
+
+        public async Task<IList<string>> GetRolesAsync(User user)
+        {
+            return await _userManager.GetRolesAsync(user);
+        }
     }
 }

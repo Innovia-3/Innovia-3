@@ -90,6 +90,7 @@ button:active {
 }
 
 .bookingRow {
+    position: relative;
     width: 100%;
 
     display: flex;
@@ -118,4 +119,34 @@ button:active {
 
 .time {
     width: 20%;
+}
+
+.deleteButton {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+
+    margin: 0;
+    padding: 6px 10px;
+
+    background-color: transparent;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+
+    color: var(--text-secondary);
+    font-size: 12px;
+    letter-spacing: 0.5px;
+
+    cursor: pointer;
+    transition: 0.15s ease;
+}
+
+.deleteButton:hover {
+    color: var(--text);
+    border-color: var(--text-secondary);
+}
+
+.deleteButton:active {
+    transform: translateY(-50%) scale(0.97);
 }
