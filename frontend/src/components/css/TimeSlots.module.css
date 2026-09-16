@@ -36,7 +36,7 @@
 
 .description {
     margin: 0;
-
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     color: var(--text-secondary);
 
     font-size: 14px;
@@ -56,9 +56,77 @@
     border-radius: 5px;
 }
 
+p {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
 .placeholder p {
     margin: 0;
-
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     color: var(--text-secondary);
     font-size: 14px;
+}
+
+.timeSlotList {
+    width: 100%;
+
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+
+    padding: 20px;
+}
+
+.timeButton {
+    min-width: 78px;
+    padding: 12px 14px;
+
+    background-color: var(--surface);
+    color: var(--text);
+
+    border: 1px solid var(--border);
+    border-radius: 6px;
+
+    font-size: 14px;
+    font-weight: 500;
+
+    cursor: pointer;
+
+    transition:
+        background-color 0.15s ease,
+        border-color 0.15s ease,
+        color 0.15s ease,
+        transform 0.15s ease;
+}
+
+.timeButton:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+.timeButton:active {
+    transform: translateY(0);
+}
+
+.selected {
+    min-width: 78px;
+    padding: 12px 14px;
+
+    background-color: var(--primary);
+    color: var(--background);
+
+    border: 1px solid var(--primary);
+    border-radius: 6px;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: 0.15s ease;
+}
+
+.selected:hover {
+    opacity: 0.9;
 }
