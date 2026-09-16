@@ -98,7 +98,10 @@ export default function Bookings() {
       console.log("SignalR ansluten!");
     })
     .catch((error) => {
-      if (error instanceof Error && error.message.includes("stopped during negotiation")) {
+      if (
+          error instanceof Error &&
+          error.message.includes("stopped during negotiation")
+        ) {
         return;
       }
 
@@ -198,9 +201,11 @@ export default function Bookings() {
                 {" – "}
                 {formatTime(booking.endTime)}
               </div>
-              <button onClick={() => deleteBooking(booking.bookingId)}>
-                {" "}
-                Ta bort bokning (id: {booking.bookingId})
+              <button
+                className={styles.deleteButton}
+                onClick={() => deleteBooking(booking.bookingId)}
+              >
+                Ta bort
               </button>
             </div>
           ))}

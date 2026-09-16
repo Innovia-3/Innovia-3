@@ -13,5 +13,6 @@ namespace api.Interfaces
         /* skapa ny användare */
         Task<bool> CreateUserAsync(User user, string password);
         Task<List<User>> GetAllAsync();
+        Task<IList<string>> GetRolesAsync(User user);
     }
 }
