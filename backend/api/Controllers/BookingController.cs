@@ -106,7 +106,6 @@ namespace api.Controllers
                 return BadRequest("Starttid måste vara före sluttid.");
             }
 
-            /* tolka inskickade tider till svensk tid */
             var swedishTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Europe/Stockholm");
 
             var swedishNow = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, swedishTimeZone);
@@ -135,7 +134,6 @@ namespace api.Controllers
                 DateTimeKind.Unspecified
             );
 
-            /* konvertera svensk tid till UTC innan bokningen sparas */
             booking.StartTime = TimeZoneInfo.ConvertTimeToUtc(
                 startLocal,
                 swedishTimeZone

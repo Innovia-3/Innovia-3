@@ -11,8 +11,8 @@ namespace api.Dtos.BookingDtos
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
         public int ResourceId { get; set; }
-        public string ResourceType { get; set; } = string.Empty; /* läsbar resurstyp till frontend */
+        public string ResourceType { get; set; } = string.Empty;
         public string UserId { get; set; } = string.Empty;
-        public string UserEmail { get; set; } = string.Empty; /* läsbar email i frontend */
+        public string UserEmail { get; set; } = string.Empty;
     }
 }

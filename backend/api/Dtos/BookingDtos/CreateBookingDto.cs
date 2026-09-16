@@ -9,7 +9,6 @@ namespace api.Dtos.BookingDtos
 {
     public class CreateBookingDto
     {
-        /* Eftersom vi ska köra med JWT så behöver vi inte ha med användare, de identifieras automatiskt med JWT*/
         [Required]
         public int ResourceId { get; set; }
         [Required]
