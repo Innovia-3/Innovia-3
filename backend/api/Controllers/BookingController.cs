@@ -11,6 +11,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using api.Hubs;
+using api.Services;
 
 namespace api.Controllers
 {
@@ -22,11 +23,13 @@ namespace api.Controllers
         private readonly IBookingRepository _bookingRepository;
         private readonly IResourceRepository _resourceRepository;
         private readonly IHubContext<BookingHub> _hubContext;
-        public BookingController(IBookingRepository bookingRepository, IHubContext<BookingHub> hubContext, IResourceRepository resourceRepository)
+        private readonly TimeService _timeService;
+        public BookingController(IBookingRepository bookingRepository, IHubContext<BookingHub> hubContext, IResourceRepository resourceRepository, TimeService timeService)
         {
             _bookingRepository = bookingRepository;
             _resourceRepository = resourceRepository;
             _hubContext = hubContext;
+            _timeService = timeService;
         }
 
         [HttpGet]
@@ -68,6 +71,7 @@ namespace api.Controllers
         public async Task<IActionResult> DeleteBookingByID([FromRoute] int id)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var isAdmin = User.IsInRole("Admin");
 
             if (userId == null)
             {
@@ -81,7 +85,7 @@ namespace api.Controllers
                 return NotFound();
             }
 
-            if (booking.UserId != userId)
+            if (booking.UserId != userId && !isAdmin)
             {
                 return Forbid();
             }
@@ -106,56 +110,34 @@ namespace api.Controllers
                 return BadRequest("Starttid måste vara före sluttid.");
             }
 
-            var swedishTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Europe/Stockholm");
-
-            var swedishNow = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, swedishTimeZone);
-
-            var currentHour = new DateTime(
-                swedishNow.Year,
-                swedishNow.Month,
-                swedishNow.Day,
-                swedishNow.Hour,
-                0,
-                0
-            );
-
-            if (booking.StartTime < currentHour)
+            if (booking.StartTime < _timeService.GetCurrentSwedishHour())
             {
-                return BadRequest("Det går inte att boka en tid som redan passerat.");
+                return BadRequest(
+                    "Det går inte att boka en tid som redan passerat."
+                );
             }
 
-            var startLocal = DateTime.SpecifyKind(
-                booking.StartTime,
-                DateTimeKind.Unspecified
-            );
-
-            var endLocal = DateTime.SpecifyKind(
-                booking.EndTime,
-                DateTimeKind.Unspecified
-            );
-
-            booking.StartTime = TimeZoneInfo.ConvertTimeToUtc(
-                startLocal,
-                swedishTimeZone
-            );
-
-            booking.EndTime = TimeZoneInfo.ConvertTimeToUtc(
-                endLocal,
-                swedishTimeZone
-            );
+            booking.StartTime = _timeService.ToUtc(booking.StartTime);
+            booking.EndTime = _timeService.ToUtc(booking.EndTime);
 
             var bookingModel = booking.ToBookingFromCreateDto(userId);
 
-            var createdBooking = await _bookingRepository.CreateBookingAsync(bookingModel);
+            var createdBooking =
+                await _bookingRepository.CreateBookingAsync(bookingModel);
 
             if (createdBooking == null)
             {
                 return Conflict("Kan inte boka vid denna tiden.");
             }
 
-            var fullBooking = await _bookingRepository.GetByIdAsync(createdBooking.BookingId);
+            var fullBooking =
+                await _bookingRepository.GetByIdAsync(
+                    createdBooking.BookingId
+                );
 
-            await _hubContext.Clients.All.SendAsync("BookingsChanged");
+            await _hubContext.Clients.All.SendAsync(
+                "BookingsChanged"
+            );
 
             return CreatedAtAction(
                 nameof(GetById),
@@ -179,53 +161,20 @@ namespace api.Controllers
                 return BadRequest("Starttid måste vara före sluttid.");
             }
 
-            var swedishTimeZone =
-                TimeZoneInfo.FindSystemTimeZoneById("Europe/Stockholm");
-
-            var swedishNow = TimeZoneInfo.ConvertTimeFromUtc(
-                DateTime.UtcNow,
-                swedishTimeZone
-            );
-
-            var currentHour = new DateTime(
-                swedishNow.Year,
-                swedishNow.Month,
-                swedishNow.Day,
-                swedishNow.Hour,
-                0,
-                0
-            );
-
-            if (booking.StartTime < currentHour)
+            if (booking.StartTime < _timeService.GetCurrentSwedishHour())
             {
                 return BadRequest(
                     "Det går inte att boka en tid som redan passerat."
                 );
             }
 
-            // Tolka frontendens tider som svensk lokal tid
-            var startLocal = DateTime.SpecifyKind(
-                booking.StartTime,
-                DateTimeKind.Unspecified
-            );
-
-            var endLocal = DateTime.SpecifyKind(
-                booking.EndTime,
-                DateTimeKind.Unspecified
-            );
-
-            var startUtc = TimeZoneInfo.ConvertTimeToUtc(
-                startLocal,
-                swedishTimeZone
-            );
-
-            var endUtc = TimeZoneInfo.ConvertTimeToUtc(
-                endLocal,
-                swedishTimeZone
-            );
+            var startUtc = _timeService.ToUtc(booking.StartTime);
+            var endUtc = _timeService.ToUtc(booking.EndTime);
 
             var resources =
-                await _resourceRepository.GetByTypeAsync(booking.ResourceType);
+                await _resourceRepository.GetByTypeAsync(
+                    booking.ResourceType
+                );
 
             foreach (var resource in resources)
             {
@@ -249,27 +198,23 @@ namespace api.Controllers
                     EndTime = endUtc
                 };
 
-                var createdBooking =
-                    await _bookingRepository.CreateBookingAsync(newBooking);
+                var createdBooking = await _bookingRepository.CreateBookingAsync(newBooking);
 
                 if (createdBooking == null)
                 {
                     continue;
                 }
 
-                var fullBooking =
-                    await _bookingRepository.GetByIdAsync(
-                        createdBooking.BookingId
-                    );
+                var fullBooking = await _bookingRepository.GetByIdAsync(createdBooking.BookingId);
 
-                await _hubContext.Clients.All.SendAsync(
-                    "BookingsChanged"
-                );
+                await _hubContext.Clients.All.SendAsync("BookingsChanged");
 
                 return Ok(fullBooking!.ToBookingDto());
             }
 
-            return Conflict("Ingen ledig resurs vid denna tiden.");
+            return Conflict(
+                "Ingen ledig resurs vid denna tiden."
+            );
         }
     }
 }
