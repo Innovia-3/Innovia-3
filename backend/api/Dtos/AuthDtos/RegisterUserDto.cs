@@ -2,7 +2,6 @@ using System.ComponentModel.DataAnnotations;
 
 namespace api.Dtos.UserDtos
 {
-    /* för admin vid skapande av ny användare */
     public class RegisterUserDto
     {   
         [Required]

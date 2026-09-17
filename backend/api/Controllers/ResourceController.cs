@@ -112,9 +112,4 @@ namespace api.Controllers
             return Ok(availability);
         }
     }
-
-    /* Elaheh */
-    /* Skriv logiken för att hämta alla resurser */
-    /* Skriv logiken för att hämta en resurs med ett specifikt id */
-    /* Skriv logiken för att hämta alla resurser med en viss 'Type' */
 }

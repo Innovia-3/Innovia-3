@@ -14,8 +14,10 @@ type TimeSlotsProps = {
   selectedSlot: TimeSlot | null;
 };
 
-const SLOT_START_HOUR = 7;
-const SLOT_END_HOUR = 23;
+const SLOT_START_HOUR = 0;
+const SLOT_END_HOUR = 24;
+const BOOKING_START_HOUR = 7;
+const BOOKING_END_HOUR = 23;
 
 function createSlots(date: Date): TimeSlot[] {
   const slots: TimeSlot[] = [];
@@ -68,6 +70,17 @@ export default function TimeSlots({
         const availabilityResults = await Promise.all(
           newSlots.map(async (slot) => {
             const start = new Date(slot.startTime);
+            const hour = start.getHours();
+
+            // Tider utanför bokningsfönstret visas,
+            // men kan inte bokas.
+            if (hour < BOOKING_START_HOUR || hour >= BOOKING_END_HOUR) {
+              return {
+                ...slot,
+                isAvailable: false,
+              };
+            }
+
             const end = new Date(slot.endTime);
 
             const params = new URLSearchParams({
@@ -115,32 +128,49 @@ export default function TimeSlots({
     });
   }
 
+  function isEndTime(time: string) {
+    return new Date(time).getHours() === BOOKING_END_HOUR;
+  }
+
   function handleTimeClick(time: string) {
+    const selectedTime = new Date(time);
+    const selectedHour = selectedTime.getHours();
+
     /* första klicket = starttid */
     if (!selectedStart) {
       const startSlot = slots.find((slot) => slot.startTime === time);
 
-      if (!startSlot || !startSlot.isAvailable) {
+      if (
+        !startSlot ||
+        !startSlot.isAvailable ||
+        selectedHour < BOOKING_START_HOUR ||
+        selectedHour >= BOOKING_END_HOUR
+      ) {
         return;
       }
 
       setSelectedStart(startSlot);
+      setError("");
       onSlotSelect(null);
       return;
     }
 
     /* sluttiden måste ligga efter starttiden */
-    if (new Date(time) <= new Date(selectedStart.startTime)) {
+    if (selectedTime <= new Date(selectedStart.startTime)) {
+      return;
+    }
+
+    /* sluttiden får inte vara efter bokningsfönstret */
+    if (selectedHour > BOOKING_END_HOUR) {
       return;
     }
 
     const slotsInRange = slots.filter(
       (slot) =>
         new Date(slot.startTime) >= new Date(selectedStart.startTime) &&
-        new Date(slot.startTime) < new Date(time),
+        new Date(slot.startTime) < selectedTime,
     );
 
-    /* alla timmar mellan start och slut måste vara lediga */
     const allAvailable = slotsInRange.every((slot) => slot.isAvailable);
 
     if (!allAvailable) {
@@ -148,7 +178,6 @@ export default function TimeSlots({
       return;
     }
 
-    /* skapa ett enda TimeSlot för hela intervallet */
     const selectedRange: TimeSlot = {
       startTime: selectedStart.startTime,
       endTime: time,
@@ -157,15 +186,8 @@ export default function TimeSlots({
 
     onSlotSelect(selectedRange);
     setSelectedStart(null);
+    setError("");
   }
-
-  const selectableTimes =
-    slots.length > 0
-      ? [
-          ...slots.map((slot) => slot.startTime),
-          slots[slots.length - 1].endTime,
-        ]
-      : [];
 
   if (!selectedDate || selectedResourceId === null) {
     return (
@@ -205,7 +227,9 @@ export default function TimeSlots({
       {!loading && !error && (
         <div className={styles.placeholder}>
           <div className={styles.timeSlotList}>
-            {selectableTimes.map((time) => {
+            {slots.map((slot) => {
+              const time = slot.startTime;
+
               const isSelected =
                 selectedStart?.startTime === time ||
                 (selectedSlot &&
@@ -216,7 +240,18 @@ export default function TimeSlots({
                 <button
                   key={time}
                   type="button"
-                  className={isSelected ? styles.selected : styles.timeButton}
+                  disabled={!slot.isAvailable && !isEndTime(time)}
+                  className={
+                    isEndTime(time)
+                      ? isSelected
+                        ? styles.selected
+                        : styles.timeButton
+                      : !slot.isAvailable
+                        ? styles.unavailable
+                        : isSelected
+                          ? styles.selected
+                          : styles.timeButton
+                  }
                   onClick={() => handleTimeClick(time)}
                 >
                   {formatTime(time)}

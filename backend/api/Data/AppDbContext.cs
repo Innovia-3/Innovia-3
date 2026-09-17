@@ -13,7 +13,7 @@ namespace api.Data
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
-            
+
         }
         public DbSet<Booking> Bookings { get; set; }
         public DbSet<Resource> Resources { get; set; }
@@ -46,28 +46,12 @@ namespace api.Data
                 new Resource { ResourceId = 23, ResourceType = Enums.ResourceType.Mötesrum },
 
                 new Resource { ResourceId = 30, ResourceType = Enums.ResourceType.AIServer },
-                new Resource { ResourceId = 31, ResourceType = Enums.ResourceType.AIServer },
-                new Resource { ResourceId = 32, ResourceType = Enums.ResourceType.AIServer },
-                new Resource { ResourceId = 33, ResourceType = Enums.ResourceType.AIServer },
-                
+
                 new Resource { ResourceId = 40, ResourceType = Enums.ResourceType.VRHeadset },
                 new Resource { ResourceId = 41, ResourceType = Enums.ResourceType.VRHeadset },
                 new Resource { ResourceId = 42, ResourceType = Enums.ResourceType.VRHeadset },
                 new Resource { ResourceId = 43, ResourceType = Enums.ResourceType.VRHeadset }
             );
-
-            modelbuilder.Entity<User>().HasData(
-                new User{ Id= "huiohoi76786GY!", }
-            );
-            
-            // modelbuilder.Entity<IdentityRole>().HasData(
-            //     new IdentityRole{ Name= "Admin", }
-            // );
         }
     }
-
-
-    /* Hårdkoda admin */
-
-    /* ... */
 }

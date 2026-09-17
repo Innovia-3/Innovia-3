@@ -1,19 +1,15 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
-using api.Models;
+using api.Enums;
 
 namespace api.Dtos.BookingDtos
 {
-    public class CreateBookingDto
+    public class CreateAutomaticBookingDto
     {
-        [Required]
-        public int ResourceId { get; set; }
-        [Required]
+        public ResourceType ResourceType { get; set; }
         public DateTime StartTime { get; set; }
-        [Required]
         public DateTime EndTime { get; set; }
     }
 }
