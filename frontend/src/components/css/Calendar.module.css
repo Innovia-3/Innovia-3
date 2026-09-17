@@ -81,7 +81,7 @@
     height: 110px;
 
     display: flex;
-
+    padding: 0;
     background-color: var(--background);
 
     border: 1px solid var(--border);
@@ -137,7 +137,35 @@
     font-weight: 600;
 }
 
+.dayContent {
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+}
+
+.overviewSlot {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: var(--text-secondary);
+
+    font-size: 11px;
+
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+}
+
 .weekend {
+    background-color: #050c14;
+}
+
+.weekend .day,
+.weekend .dayContent {
     background-color: #050c14;
 }
 
