@@ -6,12 +6,7 @@ import Calendar from "../components/Calendar";
 import TimeSlots from "../components/TimeSlots";
 import Resources from "../components/Resources";
 import Bookings from "../components/Bookings";
-
-type TimeSlot = {
-    startTime: string;
-    endTime: string;
-    isAvailable: boolean;
-};
+import { type TimeSlot } from "../components/TimeSlots";
 
 export default function LandingPage() {
     const navigate = useNavigate();

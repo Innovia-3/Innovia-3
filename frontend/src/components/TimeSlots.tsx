@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import styles from "./css/TimeSlots.module.css";
 
-type TimeSlot = {
+export type TimeSlot = {
   startTime: string;
   endTime: string;
   isAvailable: boolean;
