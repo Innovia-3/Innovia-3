@@ -47,7 +47,7 @@ namespace api.Repositories
             {
                 return null;
             }
-            await _context.Bookings.AddAsync(booking); /* dto */
+            await _context.Bookings.AddAsync(booking);
             await _context.SaveChangesAsync();
 
             return booking;
