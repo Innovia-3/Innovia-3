@@ -6,6 +6,8 @@ type CalendarProps = {
   onDateSelect: (date: Date) => void;
 };
 
+const overviewHours = Array.from({ length: 24 }, (_, index) => index);
+
 export default function Calendar({
   selectedDate,
   onDateSelect,
@@ -117,20 +119,18 @@ export default function Calendar({
             date.getDate() === today.getDate();
 
           return (
-            <div
+            <button
+              type="button"
               key={date.toISOString()}
               className={`
-                    ${styles.dayRow}
-                    ${isWeekend ? styles.weekend : ""}
-                    ${isSelected ? styles.selected : ""}
-                    ${isToday ? styles.today : ""}
-                `}
+                ${styles.dayRow}
+                ${isWeekend ? styles.weekend : ""}
+                ${isSelected ? styles.selected : ""}
+                ${isToday ? styles.today : ""}
+              `}
+              onClick={() => onDateSelect(date)}
             >
-              <button
-                type="button"
-                className={styles.day}
-                onClick={() => onDateSelect(date)}
-              >
+              <div className={styles.day}>
                 <span className={styles.dayName}>
                   {date.toLocaleDateString("sv-SE", {
                     weekday: "short",
@@ -148,10 +148,16 @@ export default function Calendar({
                       .replace(".", "")}
                   </span>
                 )}
-              </button>
+              </div>
 
-              <div className={styles.dayContent}></div>
-            </div>
+              <div className={styles.dayContent}>
+                {overviewHours.map((hour) => (
+                  <div key={hour} className={styles.overviewSlot}>
+                    {hour.toString().padStart(2, "0")}
+                  </div>
+                ))}
+              </div>
+            </button>
           );
         })}
       </div>
