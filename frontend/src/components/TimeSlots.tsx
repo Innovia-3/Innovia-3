@@ -5,19 +5,28 @@ type TimeSlot = {
   startTime: string;
   endTime: string;
   isAvailable: boolean;
+  status: "green" | "yellow" | "red" | "locked";
 };
 
 type TimeSlotsProps = {
   selectedDate?: Date;
+  selectedResourceType: /* kolla så att det är samma som i Resources! */
+    string | null;
   selectedResourceId: number | null;
+  onResourceSelect: (resourceId: number | null) => void;
   onSlotSelect: (slot: TimeSlot | null) => void;
   selectedSlot: TimeSlot | null;
+};
+
+type Resource = {
+  resourceId: number;
+  resourceType: string;
 };
 
 const SLOT_START_HOUR = 0;
 const SLOT_END_HOUR = 24;
 const BOOKING_START_HOUR = 7;
-const BOOKING_END_HOUR = 23;
+const BOOKING_END_HOUR = 24;
 
 function createSlots(date: Date): TimeSlot[] {
   const slots: TimeSlot[] = [];
@@ -33,6 +42,7 @@ function createSlots(date: Date): TimeSlot[] {
       startTime: start.toISOString(),
       endTime: end.toISOString(),
       isAvailable: false,
+      status: "locked",
     });
   }
 
@@ -41,18 +51,48 @@ function createSlots(date: Date): TimeSlot[] {
 
 export default function TimeSlots({
   selectedDate,
+  selectedResourceType,
+  onResourceSelect,
   selectedResourceId,
   onSlotSelect,
   selectedSlot,
 }: TimeSlotsProps) {
   const [slots, setSlots] = useState<TimeSlot[]>([]);
+  const [resources, setResources] = useState<Resource[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [selectedStart, setSelectedStart] = useState<TimeSlot | null>(null);
+  const [chooseSpecificResource, setChooseSpecificResource] = useState(false);
+
+  useEffect(() => {
+    async function fetchResources() {
+      if (selectedResourceType === null) {
+        setResources([]);
+        return;
+      }
+
+      try {
+        const response = await fetch(
+          `http://localhost:5197/api/Resources/types/${selectedResourceType}`,
+        );
+
+        if (!response.ok) {
+          throw new Error("Kunde inte hämta resurser.");
+        }
+
+        const data: Resource[] = await response.json();
+        setResources(data);
+      } catch (error) {
+        console.error("Kunde inte hämta resurs-ID:n:", error);
+      }
+    }
+
+    fetchResources();
+  }, [selectedResourceType]);
 
   useEffect(() => {
     async function checkAvailability() {
-      if (!selectedDate || selectedResourceId === null) {
+      if (!selectedDate || selectedResourceType === null) {
         setSlots([]);
         setSelectedStart(null);
         onSlotSelect(null);
@@ -78,6 +118,7 @@ export default function TimeSlots({
               return {
                 ...slot,
                 isAvailable: false,
+                status: "locked" as const,
               };
             }
 
@@ -88,22 +129,57 @@ export default function TimeSlots({
               endTime: end.toISOString(),
             });
 
-            const response = await fetch(
-              `http://localhost:5197/api/Resources/${selectedResourceId}/availability?${params.toString()}`,
-            );
+            let response;
+
+            if (selectedResourceId !== null) {
+              /* användaren har valt ett specifikt ID */
+              response = await fetch(
+                `http://localhost:5197/api/Resources/${selectedResourceId}/availability?${params.toString()}`,
+              );
+            } else {
+              /* första lediga -> kontrollera hela resurstypen */
+              response = await fetch(
+                `http://localhost:5197/api/Resources/types/${selectedResourceType}/availability?${params.toString()}`,
+              );
+            }
 
             if (!response.ok) {
               throw new Error("Kunde inte kontrollera tillgänglighet.");
             }
 
-            const data: {
-              resourceId: number;
-              isAvailable: boolean;
-            } = await response.json();
+            const data = await response.json();
+
+            console.log(
+              "Availability:",
+              selectedResourceType,
+              selectedResourceId,
+              data,
+            );
+
+            if (selectedResourceId !== null) {
+              return {
+                ...slot,
+                isAvailable: data.isAvailable,
+                status: data.isAvailable
+                  ? ("green" as const)
+                  : ("red" as const),
+              };
+            }
+
+            let status: "green" | "yellow" | "red";
+
+            if (data.availableResources === 0) {
+              status = "red";
+            } else if (data.availableResources < data.totalResources) {
+              status = "yellow";
+            } else {
+              status = "green";
+            }
 
             return {
               ...slot,
-              isAvailable: data.isAvailable,
+              isAvailable: data.availableResources > 0,
+              status,
             };
           }),
         );
@@ -119,7 +195,7 @@ export default function TimeSlots({
     }
 
     checkAvailability();
-  }, [selectedDate, selectedResourceId]);
+  }, [selectedDate, selectedResourceId, selectedResourceType]);
 
   function formatTime(dateString: string) {
     return new Date(dateString).toLocaleTimeString("sv-SE", {
@@ -182,6 +258,7 @@ export default function TimeSlots({
       startTime: selectedStart.startTime,
       endTime: time,
       isAvailable: true,
+      status: selectedStart.status,
     };
 
     onSlotSelect(selectedRange);
@@ -189,7 +266,7 @@ export default function TimeSlots({
     setError("");
   }
 
-  if (!selectedDate || selectedResourceId === null) {
+  if (!selectedDate || selectedResourceType === null) {
     return (
       <section className={styles.timeSlotsWrapper}>
         <div className={styles.heading}>
@@ -201,6 +278,16 @@ export default function TimeSlots({
       </section>
     );
   }
+  function formatResourceType(resourceType: string) {
+    switch (resourceType) {
+      case "VRHeadset":
+        return "VR Headset";
+      case "AIServer":
+        return "AI Server";
+      default:
+        return resourceType;
+    }
+  }
 
   return (
     <section className={styles.timeSlotsWrapper}>
@@ -210,6 +297,49 @@ export default function TimeSlots({
         <p className={styles.description}>
           Välj starttid och sluttid för din bokning
         </p>
+      </div>
+
+      <div className={styles.resourceChoice}>
+        <button
+          type="button"
+          className={styles.chooseButton}
+          onClick={() => {
+            const newValue = !chooseSpecificResource;
+
+            setChooseSpecificResource(newValue);
+
+            if (!newValue) {
+              onResourceSelect(null);
+              setSelectedStart(null);
+              onSlotSelect(null);
+            }
+          }}
+        >
+          Välj själv
+        </button>
+
+        {chooseSpecificResource && (
+          <div className={styles.resourceIdList}>
+            {resources.map((resource, index) => (
+              <button
+                key={resource.resourceId}
+                type="button"
+                className={
+                  selectedResourceId === resource.resourceId
+                    ? styles.resourceIdSelected
+                    : ""
+                }
+                onClick={() => {
+                  onResourceSelect(resource.resourceId);
+                  setSelectedStart(null);
+                  onSlotSelect(null);
+                }}
+              >
+                {formatResourceType(resource.resourceType)} {index + 1}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       {loading && (
@@ -241,17 +371,11 @@ export default function TimeSlots({
                   key={time}
                   type="button"
                   disabled={!slot.isAvailable && !isEndTime(time)}
-                  className={
-                    isEndTime(time)
-                      ? isSelected
-                        ? styles.selected
-                        : styles.timeButton
-                      : !slot.isAvailable
-                        ? styles.unavailable
-                        : isSelected
-                          ? styles.selected
-                          : styles.timeButton
-                  }
+                  className={`
+                    ${styles.timeButton}
+                    ${styles[slot.status]}
+                    ${isSelected ? styles.selected : ""}
+                    `}
                   onClick={() => handleTimeClick(time)}
                 >
                   {formatTime(time)}

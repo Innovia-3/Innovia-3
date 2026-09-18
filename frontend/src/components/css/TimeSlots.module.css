@@ -12,7 +12,7 @@
 }
 
 .heading {
-    margin-bottom: 24px;
+    margin-bottom: 5px;
     text-align: center;
 }
 
@@ -69,25 +69,19 @@ p {
 
 .timeSlotList {
     width: 100%;
-
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 10px;
-
-    padding: 20px;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    padding: 10px;
 }
 
 .timeButton {
-    min-width: 78px;
-    padding: 12px 14px;
+    height: 46px;
+    min-width: 0;
+    padding: 0;
+    margin: 0;
+    border: 1px solid transparent;
 
-    background-color: var(--surface);
     color: var(--text);
-
-    border: 1px solid var(--border);
-    border-radius: 6px;
-
     font-size: 14px;
     font-weight: 500;
 
@@ -95,38 +89,96 @@ p {
 
     transition:
         background-color 0.15s ease,
-        border-color 0.15s ease,
-        color 0.15s ease,
-        transform 0.15s ease;
+        border-color 0.15s ease;
 }
 
-.timeButton:hover {
-    border-color: var(--primary);
-    color: var(--primary);
-}
-
-.timeButton:active {
-    transform: translateY(0);
+.timeButton:not(:disabled):hover {
+    border-color: rgba(255, 255, 255, 0.616);
+    color: white;
 }
 
 .selected {
-    min-width: 78px;
-    padding: 12px 14px;
+    background: var(--primary) !important;
+    color: white !important;
+    border-color: var(--primary) !important;
 
-    background-color: var(--primary);
-    color: var(--background);
-
-    border: 1px solid var(--primary);
-    border-radius: 6px;
-
-    font-size: 14px;
-    font-weight: 600;
-
-    cursor: pointer;
-
-    transition: 0.15s ease;
+    font-weight: 700;
 }
 
 .selected:hover {
     opacity: 0.9;
+}
+
+.chooseButton {
+  padding: 5px;
+  background: var(--surface-light);
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.chooseButton:hover {
+  border-color: var(--primary);
+  color: var(--text);
+}
+
+.resourceIdList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 5px;
+  margin-bottom: 10px;
+}
+
+.resourceIdList button {
+  padding: 0.4rem 0.65rem;
+  background: var(--surface);
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.resourceIdList button:hover {
+  border-color: var(--primary);
+  color: var(--text);
+}
+
+.resourceIdSelected {
+  background: var(--primary) !important;
+  border-color: var(--primary) !important;
+  color: var(--text) !important;
+}
+
+.green {
+  background: #163c32;
+  border-color: #28705b;
+}
+
+.yellow {
+  background: #453b1c;
+  border-color: #8a742d;
+}
+
+.red {
+  background: #462329;
+  border-color: #8c3c49;
+}
+
+.locked {
+  background: var(--surface);
+  border-color: var(--border);
+  color: var(--text-secondary);
+  opacity: 0.35;
+}
+
+.red:disabled,
+.locked:disabled {
+  cursor: not-allowed;
+}
+
+.green:hover,
+.yellow:hover {
+  border-color: var(--primary);
 }

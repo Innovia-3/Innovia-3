@@ -11,12 +11,17 @@ type TimeSlot = {
     startTime: string;
     endTime: string;
     isAvailable: boolean;
+    status: "green" | "yellow" | "red" | "locked";
 };
 
 export default function LandingPage() {
     const navigate = useNavigate();
 
     const [selectedDate, setSelectedDate] = useState<Date>();
+    
+    const [selectedResourceType, setSelectedResourceType] =
+        useState<string | null>(null);
+
     const [selectedResourceId, setSelectedResourceId] =
         useState<number | null>(null);
 
@@ -29,7 +34,7 @@ export default function LandingPage() {
     const [bookingsRefreshKey, setBookingsRefreshKey] = useState(0);
 
     async function handleBooking() {
-        if (selectedResourceId === null || !selectedSlot) {
+        if (selectedResourceType === null || !selectedSlot) {
             setBookingError("Välj en resurs och en tid först.");
             return;
         }
@@ -64,21 +69,32 @@ export default function LandingPage() {
                 return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
             };
 
-            const response = await fetch(
-                "http://localhost:5197/api/Bookings",
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${token}`
-                    },
-                    body: JSON.stringify({
+            const bookingData =
+                selectedResourceId !== null
+                    ? {
                         resourceId: selectedResourceId,
                         startTime: toSwedishLocalDateTime(start),
                         endTime: toSwedishLocalDateTime(end)
-                    })
-                }
-            );
+                    }
+                    : {
+                        resourceType: selectedResourceType,
+                        startTime: toSwedishLocalDateTime(start),
+                        endTime: toSwedishLocalDateTime(end)
+                    };
+
+            const bookingUrl =
+                selectedResourceId !== null
+                    ? "http://localhost:5197/api/Bookings"
+                    : "http://localhost:5197/api/Bookings/automatic";
+
+            const response = await fetch(bookingUrl, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify(bookingData)
+            });
 
             if (response.status === 401) {
                 throw new Error(
@@ -128,9 +144,10 @@ export default function LandingPage() {
             <main className={styles.landingPage}>
                 <div className={styles.resourcesLandingWrapper}>
                     <Resources
-                        selectedResourceId={selectedResourceId}
-                        onResourceSelect={(resourceId) => {
-                            setSelectedResourceId(resourceId);
+                        selectedResourceType={selectedResourceType}
+                        onResourceTypeSelect={(resourceType) => {
+                            setSelectedResourceType(resourceType);
+                            setSelectedResourceId(null);
                             setSelectedSlot(null);
                             setBookingMessage("");
                             setBookingError("");
@@ -171,7 +188,9 @@ export default function LandingPage() {
 
                     <TimeSlots
                         selectedDate={selectedDate}
+                        selectedResourceType={selectedResourceType}
                         selectedResourceId={selectedResourceId}
+                        onResourceSelect={setSelectedResourceId}
                         selectedSlot={selectedSlot}
                         onSlotSelect={setSelectedSlot}
                     />
