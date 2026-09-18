@@ -3,20 +3,19 @@ import styles from "./css/Resources.module.css";
 
 type Resource = {
     resourceId: number;
-    resourceType: number;
+    resourceType: string;
 };
 
 type ResourcesProps = {
-    selectedResourceId: number | null;
-    onResourceSelect: (resourceId: number | null) => void;
+    selectedResourceType: string | null;
+    onResourceTypeSelect: (resourceType: string) => void;
 };
 
 export default function Resources({
-    selectedResourceId,
-    onResourceSelect
+    selectedResourceType,
+    onResourceTypeSelect
 }: ResourcesProps) {
     const [resources, setResources] = useState<Resource[]>([]);
-    const [selectedResourceType, setSelectedResourceType] = useState<number | null>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -46,25 +45,6 @@ export default function Resources({
         ...new Set(resources.map((resource) => resource.resourceType))
     ];
 
-    const getResourceName = (resourceType: number) => {
-        switch (resourceType) {
-            case 1:
-                return "Drop-in Skrivbord";
-            case 2:
-                return "Mötesrum";
-            case 3:
-                return "VR-Headset";
-            case 4:
-                return "AI-Server";
-            default:
-                return "Okänd resurs";
-        }
-    };
-
-    const resourcesOfSelectedType = resources.filter(
-        (resource) => resource.resourceType === selectedResourceType
-    );
-
     if (loading) {
         return (
             <section className={styles.resourcesWrapper}>
@@ -77,6 +57,17 @@ export default function Resources({
                 </div>
             </section>
         );
+    }
+
+    function formatResourceType(resourceType: string) {
+        switch (resourceType) {
+            case "VRHeadset":
+                return "VR Headset";
+            case "AIServer":
+                return "AI Server";
+            default:
+                return resourceType;
+        }
     }
 
     return (
@@ -97,11 +88,10 @@ export default function Resources({
                                     : ""
                             }
                             onClick={() => {
-                                setSelectedResourceType(resourceType);
-                                onResourceSelect(null as never);
+                                onResourceTypeSelect(resourceType);
                             }}
                         >
-                            <span>{getResourceName(resourceType)}</span>
+                            <span>{formatResourceType(resourceType)}</span>
 
                             <span
                                 className={`${styles.selectCircle} ${
@@ -115,41 +105,6 @@ export default function Resources({
                         </button>
                     ))}
                 </div>
-
-                {selectedResourceType !== null && (
-                    <div className={styles.resourceButtonWrapper}>
-                        {resourcesOfSelectedType.map((resource) => (
-                            <button
-                                key={resource.resourceId}
-                                type="button"
-                                className={
-                                    selectedResourceId === resource.resourceId
-                                        ? styles.selected
-                                        : ""
-                                }
-                                onClick={() =>
-                                    onResourceSelect(resource.resourceId)
-                                }
-                            >
-                                <span>
-                                    {getResourceName(resource.resourceType)} #{resource.resourceId}
-                                </span>
-
-                                <span
-                                    className={`${styles.selectCircle} ${
-                                        selectedResourceId === resource.resourceId
-                                            ? styles.circleSelected
-                                            : ""
-                                    }`}
-                                >
-                                    {selectedResourceId === resource.resourceId
-                                        ? "✓"
-                                        : ""}
-                                </span>
-                            </button>
-                        ))}
-                    </div>
-                )}
             </div>
         </section>
     );

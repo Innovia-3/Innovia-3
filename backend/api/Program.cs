@@ -21,6 +21,7 @@ builder.Services.AddControllers()
             new System.Text.Json.Serialization.JsonStringEnumConverter()
         );
     });
+
 builder.Services.AddSignalR();
 
 builder.Services.AddSwaggerGen(options =>
