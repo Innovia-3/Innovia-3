@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import styles from "./css/ResourceStatus.module.css";
 import * as signalR from "@microsoft/signalr";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 type ResourceAvailability = {
   resourceType: number;
   totalResources: number;
@@ -24,7 +26,7 @@ export default function ResourceStatus() {
 
         const requests = resourceTypes.map(async (resourceType) => {
           const response = await fetch(
-            `http://localhost:5197/api/Resources/types/${resourceType}/availability` +
+            `${API_URL}/api/Resources/types/${resourceType}/availability` +
               `?startTime=${startTime.toISOString()}` +
               `&endTime=${endTime.toISOString()}`,
           );
@@ -53,7 +55,7 @@ export default function ResourceStatus() {
     fetchResourceStatus();
 
     const connection = new signalR.HubConnectionBuilder()
-      .withUrl("http://localhost:5197/Hubs/Booking")
+      .withUrl(`${API_URL}/Hubs/booking}`)
       .withAutomaticReconnect()
       .build();
 

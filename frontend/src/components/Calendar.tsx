@@ -1,8 +1,10 @@
 import { useState } from "react";
+import TimeSlots from "./TimeSlots";
 import styles from "../components/css/Calendar.module.css";
 
 type CalendarProps = {
   selectedDate?: Date;
+  selectedResourceType: string | null;
   onDateSelect: (date: Date) => void;
 };
 
@@ -10,6 +12,7 @@ const overviewHours = Array.from({ length: 24 }, (_, index) => index);
 
 export default function Calendar({
   selectedDate,
+  selectedResourceType,
   onDateSelect,
 }: CalendarProps) {
   const today = new Date();
@@ -151,11 +154,15 @@ export default function Calendar({
               </div>
 
               <div className={styles.dayContent}>
-                {overviewHours.map((hour) => (
-                  <div key={hour} className={styles.overviewSlot}>
-                    {hour.toString().padStart(2, "0")}
-                  </div>
-                ))}
+                <TimeSlots
+                  selectedDate={date}
+                  selectedResourceType={selectedResourceType}
+                  selectedResourceId={null}
+                  onResourceSelect={() => {}}
+                  onSlotSelect={() => {}}
+                  selectedSlot={null}
+                  overview={true}
+                />
               </div>
             </button>
           );

@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import styles from "./css/TimeSlots.module.css";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 type TimeSlot = {
   startTime: string;
   endTime: string;
@@ -10,12 +12,13 @@ type TimeSlot = {
 
 type TimeSlotsProps = {
   selectedDate?: Date;
-  selectedResourceType: /* kolla så att det är samma som i Resources! */
+  selectedResourceType:
     string | null;
   selectedResourceId: number | null;
   onResourceSelect: (resourceId: number | null) => void;
   onSlotSelect: (slot: TimeSlot | null) => void;
   selectedSlot: TimeSlot | null;
+  overview?: boolean;
 };
 
 type Resource = {
@@ -56,6 +59,7 @@ export default function TimeSlots({
   selectedResourceId,
   onSlotSelect,
   selectedSlot,
+  overview = false,
 }: TimeSlotsProps) {
   const [slots, setSlots] = useState<TimeSlot[]>([]);
   const [resources, setResources] = useState<Resource[]>([]);
@@ -73,7 +77,7 @@ export default function TimeSlots({
 
       try {
         const response = await fetch(
-          `http://localhost:5197/api/Resources/types/${selectedResourceType}`,
+          `${API_URL}/api/Resources/types/${selectedResourceType}`,
         );
 
         if (!response.ok) {
@@ -134,12 +138,12 @@ export default function TimeSlots({
             if (selectedResourceId !== null) {
               /* användaren har valt ett specifikt ID */
               response = await fetch(
-                `http://localhost:5197/api/Resources/${selectedResourceId}/availability?${params.toString()}`,
+                `${API_URL}/api/Resources/${selectedResourceId}/availability?${params.toString()}`,
               );
             } else {
               /* första lediga -> kontrollera hela resurstypen */
               response = await fetch(
-                `http://localhost:5197/api/Resources/types/${selectedResourceType}/availability?${params.toString()}`,
+                `${API_URL}/api/Resources/types/${selectedResourceType}/availability?${params.toString()}`,
               );
             }
 
@@ -195,7 +199,7 @@ export default function TimeSlots({
     }
 
     checkAvailability();
-  }, [selectedDate, selectedResourceId, selectedResourceType]);
+  }, [selectedDate, selectedResourceId, selectedResourceType, onSlotSelect]);
 
   function formatTime(dateString: string) {
     return new Date(dateString).toLocaleTimeString("sv-SE", {
@@ -287,6 +291,28 @@ export default function TimeSlots({
       default:
         return resourceType;
     }
+  }
+
+  if (overview) {
+    return (
+      <div className={styles.overviewTimeSlotList}>
+        {slots.map((slot) => {
+          const time = slot.startTime;
+
+          return (
+            <div
+              key={time}
+              className={`
+              ${styles.overviewTimeSlot}
+              ${styles[slot.status]}
+            `}
+            >
+              {formatTime(time)}
+            </div>
+          );
+        })}
+      </div>
+    );
   }
 
   return (
