@@ -6,7 +6,15 @@ import Calendar from "../components/Calendar";
 import TimeSlots from "../components/TimeSlots";
 import Resources from "../components/Resources";
 import Bookings from "../components/Bookings";
-import { type TimeSlot } from "../components/TimeSlots";
+
+const API_URL = import.meta.env.VITE_API_URL;
+
+type TimeSlot = {
+    startTime: string;
+    endTime: string;
+    isAvailable: boolean;
+    status: "green" | "yellow" | "red" | "locked";
+};
 
 export default function LandingPage() {
     const navigate = useNavigate();
@@ -71,9 +79,26 @@ export default function LandingPage() {
                         resourceId: selectedResourceId,
                         startTime: toSwedishLocalDateTime(start),
                         endTime: toSwedishLocalDateTime(end)
-                    })
-                }
-            );
+                    }
+                    : {
+                        resourceType: selectedResourceType,
+                        startTime: toSwedishLocalDateTime(start),
+                        endTime: toSwedishLocalDateTime(end)
+                    };
+
+            const bookingUrl =
+                selectedResourceId !== null
+                    ? `${API_URL}/api/Bookings`
+                    : `${API_URL}/api/Bookings/automatic`;
+
+            const response = await fetch(bookingUrl, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify(bookingData)
+            });
 
             if (response.status === 401) {
                 throw new Error(
@@ -156,6 +181,7 @@ export default function LandingPage() {
                 <div className={styles.bookingCalendarWrapper}>
                     <Calendar
                         selectedDate={selectedDate}
+                        selectedResourceType={selectedResourceType}
                         onDateSelect={(date) => {
                             setSelectedDate(date);
                             setSelectedSlot(null);

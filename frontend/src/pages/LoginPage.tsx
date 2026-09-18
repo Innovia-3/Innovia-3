@@ -4,126 +4,107 @@ import Navbar from "../components/Navbar";
 import Input from "../components/Input";
 import styles from "../pages/css/LoginPage.module.css";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 export default function LoginPage() {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [error, setError] = useState("");
-    const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
-    const handleSubmit = async (
-        event: React.FormEvent<HTMLFormElement>
-    ) => {
-        event.preventDefault();
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
 
-        setError("");
-        setLoading(true);
+    setError("");
+    setLoading(true);
 
-        try {
-            const response = await fetch(
-                "http://localhost:5197/api/Auth/login",
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        email,
-                        password,
-                    }),
-                }
-            );
+    try {
+      const response = await fetch(`${API_URL}/api/Auth/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      });
 
-            if (!response.ok) {
-                if (response.status === 401) {
-                    setError("Fel email eller lösenord.");
-                } else {
-                    setError("Något gick fel. Försök igen.");
-                }
-
-                return;
-            }
-
-            const data = await response.json();
-
-            localStorage.setItem("token", data.token);
-
-            navigate("/");
-        } catch {
-            setError(
-                "Kunde inte ansluta till servern. Försök igen."
-            );
-        } finally {
-            setLoading(false);
+      if (!response.ok) {
+        if (response.status === 401) {
+          setError("Fel email eller lösenord.");
+        } else {
+          setError("Något gick fel. Försök igen.");
         }
-    };
 
-    return (
-        <>
-            <Navbar />
+        return;
+      }
 
-            <main className={styles.loginPage}>
-                <section className={styles.loginCard}>
-                    <div className={styles.heading}>
-                        <p className={styles.eyebrow}>
-                            Innovia
-                        </p>
+      const data = await response.json();
 
-                        <h1>Logga in</h1>
+      localStorage.setItem("token", data.token);
 
-                        <p>
-                            Logga in för att boka resurser och
-                            hantera dina bokningar.
-                        </p>
-                    </div>
+      navigate("/");
+    } catch {
+      setError("Kunde inte ansluta till servern. Försök igen.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-                    <form
-                        className={styles.loginForm}
-                        onSubmit={handleSubmit}
-                    >
-                        <Input
-                            label="Email:"
-                            type="email"
-                            value={email}
-                            placeholder="Skriv din email"
-                            onChange={setEmail}
-                        />
+  return (
+    <>
+      <Navbar />
 
-                        <Input
-                            label="Lösenord:"
-                            type="password"
-                            value={password}
-                            placeholder="Skriv ditt lösenord"
-                            onChange={setPassword}
-                        />
+      <main className={styles.loginPage}>
+        <section className={styles.loginCard}>
+          <div className={styles.heading}>
+            <p className={styles.eyebrow}>Innovia</p>
 
-                        {error && (
-                            <p role="alert">
-                                {error}
-                            </p>
-                        )}
+            <h1>Logga in</h1>
 
-                        <button
-                            className={styles.backButton}
-                            type="button"
-                            onClick={() => navigate("/")}
-                        >
-                            Tillbaka
-                        </button>
+            <p>Logga in för att boka resurser och hantera dina bokningar.</p>
+          </div>
 
-                        <button
-                            className={styles.loginButton}
-                            type="submit"
-                            disabled={loading}
-                        >
-                            {loading
-                                ? "Loggar in..."
-                                : "Logga in"}
-                        </button>
-                    </form>
-                </section>
-            </main>
-        </>
-    );
+          <form className={styles.loginForm} onSubmit={handleSubmit}>
+            <Input
+              label="Email:"
+              type="email"
+              value={email}
+              placeholder="Skriv din email"
+              onChange={setEmail}
+            />
+
+            <Input
+              label="Lösenord:"
+              type="password"
+              value={password}
+              placeholder="Skriv ditt lösenord"
+              onChange={setPassword}
+            />
+
+            {error && <p role="alert">{error}</p>}
+
+            <button
+              className={styles.backButton}
+              type="button"
+              onClick={() => navigate("/")}
+            >
+              Tillbaka
+            </button>
+
+            <button
+              className={styles.loginButton}
+              type="submit"
+              disabled={loading}
+            >
+              {loading ? "Loggar in..." : "Logga in"}
+            </button>
+          </form>
+        </section>
+      </main>
+    </>
+  );
 }

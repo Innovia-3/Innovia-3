@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import styles from "./css/TimeSlots.module.css";
 
-export type TimeSlot = {
+const API_URL = import.meta.env.VITE_API_URL;
+
+type TimeSlot = {
   startTime: string;
   endTime: string;
   isAvailable: boolean;
@@ -9,9 +11,17 @@ export type TimeSlot = {
 
 type TimeSlotsProps = {
   selectedDate?: Date;
+  selectedResourceType:
+    string | null;
   selectedResourceId: number | null;
   onSlotSelect: (slot: TimeSlot | null) => void;
   selectedSlot: TimeSlot | null;
+  overview?: boolean;
+};
+
+type Resource = {
+  resourceId: number;
+  resourceType: string;
 };
 
 const SLOT_START_HOUR = 0;
@@ -44,11 +54,39 @@ export default function TimeSlots({
   selectedResourceId,
   onSlotSelect,
   selectedSlot,
+  overview = false,
 }: TimeSlotsProps) {
   const [slots, setSlots] = useState<TimeSlot[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [selectedStart, setSelectedStart] = useState<TimeSlot | null>(null);
+  const [chooseSpecificResource, setChooseSpecificResource] = useState(false);
+
+  useEffect(() => {
+    async function fetchResources() {
+      if (selectedResourceType === null) {
+        setResources([]);
+        return;
+      }
+
+      try {
+        const response = await fetch(
+          `${API_URL}/api/Resources/types/${selectedResourceType}`,
+        );
+
+        if (!response.ok) {
+          throw new Error("Kunde inte hämta resurser.");
+        }
+
+        const data: Resource[] = await response.json();
+        setResources(data);
+      } catch (error) {
+        console.error("Kunde inte hämta resurs-ID:n:", error);
+      }
+    }
+
+    fetchResources();
+  }, [selectedResourceType]);
 
   useEffect(() => {
     async function checkAvailability() {
@@ -88,9 +126,19 @@ export default function TimeSlots({
               endTime: end.toISOString(),
             });
 
-            const response = await fetch(
-              `http://localhost:5197/api/Resources/${selectedResourceId}/availability?${params.toString()}`,
-            );
+            let response;
+
+            if (selectedResourceId !== null) {
+              /* användaren har valt ett specifikt ID */
+              response = await fetch(
+                `${API_URL}/api/Resources/${selectedResourceId}/availability?${params.toString()}`,
+              );
+            } else {
+              /* första lediga -> kontrollera hela resurstypen */
+              response = await fetch(
+                `${API_URL}/api/Resources/types/${selectedResourceType}/availability?${params.toString()}`,
+              );
+            }
 
             if (!response.ok) {
               throw new Error("Kunde inte kontrollera tillgänglighet.");
@@ -119,7 +167,7 @@ export default function TimeSlots({
     }
 
     checkAvailability();
-  }, [selectedDate, selectedResourceId]);
+  }, [selectedDate, selectedResourceId, selectedResourceType, onSlotSelect]);
 
   function formatTime(dateString: string) {
     return new Date(dateString).toLocaleTimeString("sv-SE", {
@@ -199,6 +247,38 @@ export default function TimeSlots({
           </p>
         </div>
       </section>
+    );
+  }
+  function formatResourceType(resourceType: string) {
+    switch (resourceType) {
+      case "VRHeadset":
+        return "VR Headset";
+      case "AIServer":
+        return "AI Server";
+      default:
+        return resourceType;
+    }
+  }
+
+  if (overview) {
+    return (
+      <div className={styles.overviewTimeSlotList}>
+        {slots.map((slot) => {
+          const time = slot.startTime;
+
+          return (
+            <div
+              key={time}
+              className={`
+              ${styles.overviewTimeSlot}
+              ${styles[slot.status]}
+            `}
+            >
+              {formatTime(time)}
+            </div>
+          );
+        })}
+      </div>
     );
   }
 
