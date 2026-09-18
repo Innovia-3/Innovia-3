@@ -7,6 +7,8 @@ import TimeSlots from "../components/TimeSlots";
 import Resources from "../components/Resources";
 import Bookings from "../components/Bookings";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 type TimeSlot = {
     startTime: string;
     endTime: string;
@@ -84,8 +86,8 @@ export default function LandingPage() {
 
             const bookingUrl =
                 selectedResourceId !== null
-                    ? "http://localhost:5197/api/Bookings"
-                    : "http://localhost:5197/api/Bookings/automatic";
+                    ? `${API_URL}/api/Bookings`
+                    : `${API_URL}/api/Bookings/automatic`;
 
             const response = await fetch(bookingUrl, {
                 method: "POST",
@@ -178,6 +180,7 @@ export default function LandingPage() {
                 <div className={styles.bookingCalendarWrapper}>
                     <Calendar
                         selectedDate={selectedDate}
+                        selectedResourceType={selectedResourceType}
                         onDateSelect={(date) => {
                             setSelectedDate(date);
                             setSelectedSlot(null);

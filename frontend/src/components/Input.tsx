@@ -21,7 +21,6 @@ export default function Input({
 
     return (
         <div className={styles.inputGroup}>
-
             <label className={styles.inputLabel}>
                 {label}
             </label>
@@ -49,7 +48,6 @@ export default function Input({
                     </button>
                 )}
             </div>
-
         </div>
     );
 }

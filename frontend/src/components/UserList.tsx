@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import styles from "./css/UserList.module.css";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 type User = {
   userId: string;
   email: string;
@@ -25,7 +27,7 @@ export default function UserList() {
           throw new Error("Ingen inloggningstoken hittades.");
         }
 
-        const response = await fetch("http://localhost:5197/api/Users", {
+        const response = await fetch(`${API_URL}/api/Users`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,

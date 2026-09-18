@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import styles from "./css/Resources.module.css";
+const API_URL = import.meta.env.VITE_API_URL;
 
 type Resource = {
     resourceId: number;
@@ -22,7 +23,7 @@ export default function Resources({
         async function fetchResources() {
             try {
                 const response = await fetch(
-                    "http://localhost:5197/api/Resources"
+                    `${API_URL}/api/Resources`
                 );
 
                 if (!response.ok) {
