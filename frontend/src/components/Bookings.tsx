@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import styles from "./css/Bookings.module.css";
 import * as signalR from "@microsoft/signalr";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 type Booking = {
   bookingId: number;
   startTime: string;
@@ -38,7 +40,7 @@ export default function Bookings() {
         }
 
         const response = await fetch(
-          "http://localhost:5197/api/Bookings/mine",
+          `${API_URL}/api/Bookings/mine`,
           {
             method: "GET",
             headers: {
@@ -84,29 +86,29 @@ export default function Bookings() {
     getBookings();
 
     const connection = new signalR.HubConnectionBuilder()
-    .withUrl("http://localhost:5197/Hubs/Booking")
-    .withAutomaticReconnect()
-    .build();
+      .withUrl(`${API_URL}/Hubs/Booking`)
+      .withAutomaticReconnect()
+      .build();
 
     connection.on("BookingsChanged", () => {
       getBookings();
     });
 
     connection
-    .start()
-    .then(() => {
-      console.log("SignalR ansluten!");
-    })
-    .catch((error) => {
-      if (
+      .start()
+      .then(() => {
+        console.log("SignalR ansluten!");
+      })
+      .catch((error) => {
+        if (
           error instanceof Error &&
           error.message.includes("stopped during negotiation")
         ) {
-        return;
-      }
+          return;
+        }
 
-      console.error("SignalR-fel:", error);
-    });
+        console.error("SignalR-fel:", error);
+      });
 
     return () => {
       connection.stop();
@@ -127,7 +129,7 @@ export default function Bookings() {
   const deleteBooking = async (id: number) => {
     const token = localStorage.getItem("token");
 
-    await fetch(`http://localhost:5197/api/Bookings/${id}`, {
+    await fetch(`${API_URL}/api/Bookings/${id}`, {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${token}`,
