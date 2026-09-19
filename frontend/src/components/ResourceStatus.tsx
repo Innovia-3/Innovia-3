@@ -55,18 +55,19 @@ export default function ResourceStatus() {
     fetchResourceStatus();
 
     const connection = new signalR.HubConnectionBuilder()
-      .withUrl(`${API_URL}/Hubs/booking}`)
+      .withUrl(`${API_URL}/Hubs/booking`)
       .withAutomaticReconnect()
       .build();
 
     connection.on("BookingsChanged", () => {
+      console.log("SignalR Ändrad");
       fetchResourceStatus();
     });
 
     connection
       .start()
       .then(() => {
-        console.log("SignalR ansluten!");
+        console.log("SignalR Ansluten");
       })
       .catch((error) => {
         if (
