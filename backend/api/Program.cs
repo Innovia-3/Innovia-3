@@ -104,7 +104,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("Frontend", policy =>
     {
         policy
-            .WithOrigins("http://localhost:5173", "http://localhost:3000")
+            .WithOrigins("http://localhost:5173", "http://localhost:3000", "https://innovia-3-frontend-production.up.railway.app")
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowCredentials();
