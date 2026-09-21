@@ -126,3 +126,26 @@
     border-color: var(--primary);
     color: var(--background);
 }
+
+@media (max-width: 600px) {
+  .resourcesWrapper {
+    padding: 16px;
+  }
+
+  .heading {
+    margin-bottom: 16px;
+  }
+
+  .heading h2 {
+    font-size: 20px;
+  }
+
+  .resourceButtonWrapper button {
+    height: 52px;
+    padding: 0 14px;
+  }
+
+  .placeholder {
+    min-height: 120px;
+  }
+}

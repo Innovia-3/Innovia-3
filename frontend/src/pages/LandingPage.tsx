@@ -216,17 +216,6 @@ export default function LandingPage() {
             />
           ) : (
             <div className={styles.timeSlotsView}>
-              <button
-                type="button"
-                className={styles.backButton}
-                onClick={() => {
-                  setSelectedDate(undefined);
-                  setSelectedSlot(null);
-                }}
-              >
-                ← Tillbaka till kalendern
-              </button>
-
               <div className={styles.selectedDate}>
                 <p>Valt datum</p>
 
@@ -237,6 +226,17 @@ export default function LandingPage() {
                     month: "long",
                   })}
                 </h2>
+
+                <button
+                  type="button"
+                  className={styles.backButton}
+                  onClick={() => {
+                    setSelectedDate(undefined);
+                    setSelectedSlot(null);
+                  }}
+                >
+                  ← Tillbaka till kalendern
+                </button>
               </div>
 
               <TimeSlots

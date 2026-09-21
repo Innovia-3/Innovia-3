@@ -46,7 +46,6 @@ export default function RegisterUser() {
         setError(errorMessage || "Något gick fel");
         return;
       }
-      
     } catch {
       setError("Kunde inte ansluta till servern. Försök igen.");
     } finally {
@@ -55,40 +54,54 @@ export default function RegisterUser() {
   };
 
   return (
-    <>
-    <section>
-      <button
-        className={styles.backButton}
-        type="button"
-        onClick={() => navigate("/")}
-      >
-        Tillbaka
-      </button>
-      <h2>Registrera användare</h2>
+    <main className={styles.registerPage}>
+      <section className={styles.registerCard}>
+        <div className={styles.heading}>
+          <p className={styles.eyebrow}>ADMIN</p>
+          <h1>Registrera användare</h1>
+          <p>Skapa ett nytt användarkonto för InnoviaHub.</p>
+        </div>
 
-      <form onSubmit={handleSubmit}>
-        <Input
-          type="email"
-          label="E-post"
-          value={email}
-          placeholder="dittnamn@innoviahub.se"
-          onChange={setEmail}
-        />
-        <Input
-          type="password"
-          label="lösenord"
-          value={password}
-          placeholder="Abcd1234!"
-          onChange={setPassword}
-        />
+        <form className={styles.registerForm} onSubmit={handleSubmit}>
+          <Input
+            type="email"
+            label="E-post"
+            value={email}
+            placeholder="dittnamn@innoviahub.se"
+            onChange={setEmail}
+          />
 
-        {error && <p role="alert">{error}</p>}
+          <Input
+            type="password"
+            label="Lösenord"
+            value={password}
+            placeholder="Abcd1234!"
+            onChange={setPassword}
+          />
 
-        <button type="submit">
-          {loading ? "Registrerar in..." : "Registrera"}
-        </button>
-      </form>
-    </section>
-    </>
+          {error && (
+            <p className={styles.errorMessage} role="alert">
+              {error}
+            </p>
+          )}
+
+          <button
+            className={styles.registerButton}
+            type="submit"
+            disabled={loading}
+          >
+            {loading ? "Registrerar..." : "Registrera"}
+          </button>
+
+          <button
+            className={styles.backButton}
+            type="button"
+            onClick={() => navigate("/")}
+          >
+            Tillbaka
+          </button>
+        </form>
+      </section>
+    </main>
   );
 }
