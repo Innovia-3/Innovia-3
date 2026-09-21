@@ -90,8 +90,23 @@
     overflow: hidden;
 
     transition:
-        border-color 0.15s ease,
-        background-color 0.15s ease;
+        border-color 0.2s ease,
+        background-color 0.2s ease,
+        box-shadow 0.2s ease,
+        transform 0.2s ease;
+}
+
+.dayRow:hover {
+    border-color: var(--primary);
+    background-color: var(--surface-light);
+
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+    transform: translateY(-2px);
+}
+
+.dayRow:active {
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+    transform: translateY(0);
 }
 
 .day {
@@ -160,7 +175,7 @@
 }
 
 .weekend {
-    background-color: #050c14;
+    background-color: #040a11;
 }
 
 .weekend .day,
