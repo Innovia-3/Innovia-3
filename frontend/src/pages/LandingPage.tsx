@@ -1,4 +1,3 @@
-import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import * as signalR from "@microsoft/signalr";
 import Navbar from "../components/Navbar";
@@ -18,7 +17,6 @@ type TimeSlot = {
 };
 
 export default function LandingPage() {
-  const navigate = useNavigate();
 
   const [selectedDate, setSelectedDate] = useState<Date>();
 
@@ -192,12 +190,7 @@ export default function LandingPage() {
               bokning.
             </p>
 
-            <button
-              className={styles.adminButton}
-              onClick={() => navigate("/admin")}
-            >
-              Gå till admin-vy
-            </button>
+
           </section>
         </div>
 

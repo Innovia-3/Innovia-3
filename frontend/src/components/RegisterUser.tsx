@@ -10,6 +10,7 @@ export default function RegisterUser() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showForm, setShowForm] = useState(false);
   //   const [message, setMessage] = useState("");
   const navigate = useNavigate();
 
@@ -52,55 +53,75 @@ export default function RegisterUser() {
       setLoading(false);
     }
   };
-
+  
   return (
     <main className={styles.registerPage}>
       <section className={styles.registerCard}>
-        <div className={styles.heading}>
-          <p className={styles.eyebrow}>ADMIN</p>
-          <h1>Registrera användare</h1>
-          <p>Skapa ett nytt användarkonto för InnoviaHub.</p>
-        </div>
-
-        <form className={styles.registerForm} onSubmit={handleSubmit}>
-          <Input
-            type="email"
-            label="E-post"
-            value={email}
-            placeholder="dittnamn@innoviahub.se"
-            onChange={setEmail}
-          />
-
-          <Input
-            type="password"
-            label="Lösenord"
-            value={password}
-            placeholder="Abcd1234!"
-            onChange={setPassword}
-          />
-
-          {error && (
-            <p className={styles.errorMessage} role="alert">
-              {error}
-            </p>
-          )}
-
+        {!showForm ? (
           <button
             className={styles.registerButton}
-            type="submit"
-            disabled={loading}
-          >
-            {loading ? "Registrerar..." : "Registrera"}
-          </button>
-
-          <button
-            className={styles.backButton}
             type="button"
-            onClick={() => navigate("/")}
+            onClick={() => setShowForm(true)}
           >
-            Tillbaka
+            Registrera användare
           </button>
-        </form>
+        ) : (
+          <>
+            <div className={styles.heading}>
+              <p className={styles.eyebrow}>ADMIN</p>
+              <h1>Registrera användare</h1>
+              <p>Skapa ett nytt användarkonto för InnoviaHub.</p>
+            </div>
+
+            <form className={styles.registerForm} onSubmit={handleSubmit}>
+              <Input
+                type="email"
+                label="E-post"
+                value={email}
+                placeholder="dittnamn@innoviahub.se"
+                onChange={setEmail}
+              />
+
+              <Input
+                type="password"
+                label="Lösenord"
+                value={password}
+                placeholder="Abcd1234!"
+                onChange={setPassword}
+              />
+
+              {error && (
+                <p className={styles.errorMessage} role="alert">
+                  {error}
+                </p>
+              )}
+
+              <button
+                className={styles.registerButton}
+                type="submit"
+                disabled={loading}
+              >
+                {loading ? "Registrerar..." : "Registrera"}
+              </button>
+
+              <button
+                className={styles.backButton}
+                type="button"
+                onClick={() => navigate("/")}
+              >
+                Tillbaka
+              </button>
+
+              <button
+                className={styles.backButton}
+                type="button"
+                onClick={() => setShowForm(false)}
+              >
+                Stäng registrering
+              </button>
+            </form>
+          </>
+        )}
       </section>
     </main>
   );
