@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "./css/Bookings.module.css";
 
 const API_URL = import.meta.env.VITE_API_URL;
