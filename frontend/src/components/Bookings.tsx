@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "./css/Bookings.module.css";
 import * as signalR from "@microsoft/signalr";
 
@@ -19,8 +19,6 @@ export default function Bookings() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [showAll, setShowAll] = useState(false);
-  const [showPassed, setShowPassed] = useState(false);
-
   // const connection = new signalR.HubConnectionBuilder()
   //   .withUrl("http://localhost:5197/Hubs/Booking")
   //   .build();
@@ -28,18 +26,6 @@ export default function Bookings() {
   // connection.on("BookingsChanged", () => {
   //   console.log("Hallo from connection!");
   // });
-  const now = new Date().getTime();
-
-  console.log("now: " + now);
-
-  const passedBookings = useMemo(
-    () => bookings.filter((b) => Date.parse(b.endTime) > now),
-    [bookings, now],
-  );
-  const activeBookings = useMemo(
-    () => bookings.filter((b) => now > Date.parse(b.endTime)),
-    [bookings, now],
-  );
 
   useEffect(() => {
     async function getBookings() {
@@ -53,12 +39,15 @@ export default function Bookings() {
           throw new Error("Ingen inloggningstoken hittades.");
         }
 
-        const response = await fetch(`${API_URL}/api/Bookings/mine`, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
+        const response = await fetch(
+          `${API_URL}/api/Bookings/mine`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           },
-        });
+        );
 
         console.log("GET /api/Bookings status:", response.status);
 
@@ -158,16 +147,7 @@ export default function Bookings() {
     });
   };
 
-  // const visibleBookings = showAll && !showPassed ? bookings : bookings.slice(0, 5);
-  function visibleBookings() {
-    return showAll && !showPassed
-      ? activeBookings
-      : showAll && showPassed
-        ? passedBookings
-        : !showAll && showPassed
-          ? passedBookings.slice(0, 5)
-          : activeBookings.slice(0, 5);
-  }
+  const visibleBookings = showAll ? bookings : bookings.slice(0, 5);
 
   return (
     <section id="bookings" className={styles.bookingsWrapper}>
@@ -180,9 +160,6 @@ export default function Bookings() {
               {showAll ? "Visa färre bokningar ↑" : "Visa alla bokningar →"}
             </button>
           )}
-          <button type="button" onClick={() => setShowPassed(!showPassed)}>
-            {showPassed ? "Visa gamla bokningar" : "Visa aktuella bokningar"}
-          </button>
         </div>
 
         <div className={styles.info}>
@@ -213,7 +190,7 @@ export default function Bookings() {
 
       {!loading && !error && bookings.length > 0 && (
         <div className={styles.bookingList}>
-          {visibleBookings().map((booking) => (
+          {visibleBookings.map((booking) => (
             <div key={booking.bookingId} className={styles.bookingRow}>
               <div className={styles.resource}>{booking.resourceType}</div>
 
