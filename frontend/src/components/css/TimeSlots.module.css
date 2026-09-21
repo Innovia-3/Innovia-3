@@ -1,12 +1,11 @@
 .timeSlotsWrapper {
     width: 100%;
     max-width: 1000px;
-    padding: 24px;
+    padding: 10px 24px 24px 24px;
 
     background-color: var(--surface);
 
     border: 1px solid var(--border);
-    border-radius: 0 0 6px 6px;
 
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
@@ -213,4 +212,11 @@ p {
     font-weight: 500;
 
     pointer-events: none;
+}
+
+.overviewTimeSlot.locked {
+  background: transparent;
+  color: var(--text);
+  opacity: 0.25;
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }

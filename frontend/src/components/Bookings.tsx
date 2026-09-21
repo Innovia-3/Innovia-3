@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import styles from "./css/Bookings.module.css";
-import * as signalR from "@microsoft/signalr";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -19,13 +18,6 @@ export default function Bookings() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [showAll, setShowAll] = useState(false);
-  // const connection = new signalR.HubConnectionBuilder()
-  //   .withUrl("http://localhost:5197/Hubs/Booking")
-  //   .build();
-
-  // connection.on("BookingsChanged", () => {
-  //   console.log("Hallo from connection!");
-  // });
 
   useEffect(() => {
     async function getBookings() {
@@ -39,15 +31,12 @@ export default function Bookings() {
           throw new Error("Ingen inloggningstoken hittades.");
         }
 
-        const response = await fetch(
-          `${API_URL}/api/Bookings/mine`,
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+        const response = await fetch(`${API_URL}/api/Bookings/mine`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
           },
-        );
+        });
 
         console.log("GET /api/Bookings status:", response.status);
 
@@ -84,35 +73,6 @@ export default function Bookings() {
     }
 
     getBookings();
-
-    const connection = new signalR.HubConnectionBuilder()
-      .withUrl(`${API_URL}/Hubs/Booking`)
-      .withAutomaticReconnect()
-      .build();
-
-    connection.on("BookingsChanged", () => {
-      getBookings();
-    });
-
-    connection
-      .start()
-      .then(() => {
-        console.log("SignalR ansluten!");
-      })
-      .catch((error) => {
-        if (
-          error instanceof Error &&
-          error.message.includes("stopped during negotiation")
-        ) {
-          return;
-        }
-
-        console.error("SignalR-fel:", error);
-      });
-
-    return () => {
-      connection.stop();
-    };
   }, []);
 
   function formatDate(dateString: string) {
@@ -129,22 +89,18 @@ export default function Bookings() {
   const deleteBooking = async (id: number) => {
     const token = localStorage.getItem("token");
 
-    await fetch(`${API_URL}/api/Bookings/${id}`, {
+    const response = await fetch(`${API_URL}/api/Bookings/${id}`, {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${token}`,
       },
-    }).then((response) => {
-      if (response.status === 200) {
-        setBookings(
-          bookings.filter((booking) => {
-            return booking.bookingId! == id;
-          }),
-        );
-      } else {
-        return;
-      }
     });
+
+    if (response.ok) {
+      setBookings((current) =>
+        current.filter((booking) => booking.bookingId !== id),
+      );
+    }
   };
 
   const visibleBookings = showAll ? bookings : bookings.slice(0, 5);
