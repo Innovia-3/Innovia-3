@@ -95,3 +95,45 @@
     flex-direction: row;
     gap: 15px;
 }
+
+@media (max-width: 600px) {
+    .adminPage {
+        min-height: calc(100vh - 64px);
+        padding: 30px 12px 12px;
+    }
+
+    .adminBookingViewWrapper {
+        gap: 12px;
+    }
+
+    .admin {
+        padding: 20px;
+    }
+
+    .eyebrow {
+        font-size: 11px;
+        letter-spacing: 1px;
+    }
+
+    .admin h1 {
+        margin-bottom: 8px;
+        font-size: 26px;
+    }
+
+    .description {
+        font-size: 13px;
+        line-height: 1.4;
+    }
+
+    .landingButton {
+        margin-top: 16px;
+        padding: 10px;
+        font-size: 12px;
+    }
+
+    .resourceStatusAndUserListWrapper {
+        flex-direction: column;
+        gap: 12px;
+        margin-top: 12px;
+    }
+}
