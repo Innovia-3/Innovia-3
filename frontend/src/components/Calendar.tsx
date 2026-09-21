@@ -6,12 +6,14 @@ type CalendarProps = {
   selectedDate?: Date;
   selectedResourceType: string | null;
   onDateSelect: (date: Date) => void;
+  refreshKey: number;
 };
 
 export default function Calendar({
   selectedDate,
   selectedResourceType,
   onDateSelect,
+  refreshKey,
 }: CalendarProps) {
   const today = new Date();
 
@@ -129,7 +131,11 @@ export default function Calendar({
                 ${isSelected ? styles.selected : ""}
                 ${isToday ? styles.today : ""}
               `}
-              onClick={() => onDateSelect(date)}
+              onClick={() => {
+                if (selectedResourceType !== null) {
+                  onDateSelect(date);
+                }
+              }}
             >
               <div className={styles.day}>
                 <span className={styles.dayName}>
@@ -160,6 +166,7 @@ export default function Calendar({
                   onSlotSelect={() => {}}
                   selectedSlot={null}
                   overview={true}
+                  refreshKey={refreshKey}
                 />
               </div>
             </button>

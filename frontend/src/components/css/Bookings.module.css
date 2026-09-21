@@ -6,7 +6,7 @@
     background-color: var(--surface);
 
     border: 1px solid var(--border);
-    border-radius: 6px;
+    border-radius: 0 0 6px 6px;
 
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
@@ -104,9 +104,12 @@ button:active {
 
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
+.resourceId {
+    width: 10%;
+}
 
 .resource {
-    width: 25%;
+    width: 20%;
 }
 
 .user {
@@ -114,7 +117,7 @@ button:active {
 }
 
 .date {
-    width: 25%;
+    width: 20%;
 }
 
 .time {

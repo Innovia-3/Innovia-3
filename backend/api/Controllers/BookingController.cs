@@ -212,9 +212,7 @@ namespace api.Controllers
                 return Ok(fullBooking!.ToBookingDto());
             }
 
-            return Conflict(
-                "Ingen ledig resurs vid denna tiden."
-            );
+            return Conflict("Ingen ledig resurs vid denna tiden.");
         }
     }
 }
