@@ -12,13 +12,13 @@ type TimeSlot = {
 
 type TimeSlotsProps = {
   selectedDate?: Date;
-  selectedResourceType:
-    string | null;
+  selectedResourceType: string | null;
   selectedResourceId: number | null;
   onResourceSelect: (resourceId: number | null) => void;
   onSlotSelect: (slot: TimeSlot | null) => void;
   selectedSlot: TimeSlot | null;
   overview?: boolean;
+  refreshKey?: number;
 };
 
 type Resource = {
@@ -60,6 +60,7 @@ export default function TimeSlots({
   onSlotSelect,
   selectedSlot,
   overview = false,
+  refreshKey = 0,
 }: TimeSlotsProps) {
   const [slots, setSlots] = useState<TimeSlot[]>([]);
   const [resources, setResources] = useState<Resource[]>([]);
@@ -96,10 +97,26 @@ export default function TimeSlots({
 
   useEffect(() => {
     async function checkAvailability() {
-      if (!selectedDate || selectedResourceType === null) {
+      if (!selectedDate) {
         setSlots([]);
         setSelectedStart(null);
-        onSlotSelect(null);
+
+        if (!overview) {
+          onSlotSelect(null);
+        }
+
+        return;
+      }
+
+      if (selectedResourceType === null) {
+        if (overview) {
+          setSlots(createSlots(selectedDate));
+        } else {
+          setSlots([]);
+          setSelectedStart(null);
+          onSlotSelect(null);
+        }
+
         return;
       }
 
@@ -199,7 +216,13 @@ export default function TimeSlots({
     }
 
     checkAvailability();
-  }, [selectedDate, selectedResourceId, selectedResourceType, onSlotSelect]);
+  }, [
+    selectedDate,
+    selectedResourceId,
+    selectedResourceType,
+    onSlotSelect,
+    refreshKey,
+  ]);
 
   function formatTime(dateString: string) {
     return new Date(dateString).toLocaleTimeString("sv-SE", {
@@ -232,6 +255,14 @@ export default function TimeSlots({
       setSelectedStart(startSlot);
       setError("");
       onSlotSelect(null);
+      return;
+    }
+
+    /* klick på samma starttid igen = avmarkera */
+    if (selectedStart.startTime === time) {
+      setSelectedStart(null);
+      onSlotSelect(null);
+      setError("");
       return;
     }
 
@@ -270,11 +301,16 @@ export default function TimeSlots({
     setError("");
   }
 
-  if (!selectedDate || selectedResourceType === null) {
+  if (!selectedDate) {
+    return null;
+  }
+
+  if (selectedResourceType === null && !overview) {
     return (
       <section className={styles.timeSlotsWrapper}>
         <div className={styles.heading}>
           <p className={styles.eyebrow}>Tider</p>
+
           <p className={styles.description}>
             Välj en resurs och ett datum för att se tillgängliga tider.
           </p>
@@ -317,14 +353,6 @@ export default function TimeSlots({
 
   return (
     <section className={styles.timeSlotsWrapper}>
-      <div className={styles.heading}>
-        <p className={styles.eyebrow}>Tider</p>
-
-        <p className={styles.description}>
-          Välj starttid och sluttid för din bokning
-        </p>
-      </div>
-
       <div className={styles.resourceChoice}>
         <button
           type="button"
