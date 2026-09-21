@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "./css/Bookings.module.css";
 import * as signalR from "@microsoft/signalr";
 
@@ -10,6 +10,7 @@ type Booking = {
   endTime: string;
   resourceId: number;
   resourceType: string;
+  resourceName: string;
   userId: string;
   userEmail: string;
 };
@@ -180,13 +181,11 @@ export default function Bookings() {
               {showAll ? "Visa färre bokningar ↑" : "Visa alla bokningar →"}
             </button>
           )}
-          <button type="button" onClick={() => setShowPassed(!showPassed)}>
-            {showPassed ? "Visa gamla bokningar" : "Visa aktuella bokningar"}
-          </button>
         </div>
 
         <div className={styles.info}>
           <div className={styles.resource}>Resurs</div>
+          <div className={styles.resourceId}>ID</div>
           <div className={styles.user}>Användare</div>
           <div className={styles.date}>Datum</div>
           <div className={styles.time}>Tid</div>
@@ -213,9 +212,10 @@ export default function Bookings() {
 
       {!loading && !error && bookings.length > 0 && (
         <div className={styles.bookingList}>
-          {visibleBookings().map((booking) => (
+          {visibleBookings.map((booking) => (
             <div key={booking.bookingId} className={styles.bookingRow}>
-              <div className={styles.resource}>{booking.resourceType}</div>
+              <div className={styles.resource}>{booking.resourceName}</div>
+              <div className={styles.resourceId}>{booking.resourceId}</div>
 
               <div className={styles.user}>{booking.userEmail}</div>
 
