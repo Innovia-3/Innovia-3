@@ -1,4 +1,3 @@
-import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import Navbar from "../components/Navbar";
 import styles from "./css/LandingPage.module.css";
@@ -17,7 +16,6 @@ type TimeSlot = {
 };
 
 export default function LandingPage() {
-    const navigate = useNavigate();
 
     const [selectedDate, setSelectedDate] = useState<Date>();
     
@@ -167,13 +165,6 @@ export default function LandingPage() {
                             Välj en resurs, ett datum och en ledig tid för att
                             genomföra en bokning.
                         </p>
-
-                        <button
-                            className={styles.adminButton}
-                            onClick={() => navigate("/admin")}
-                        >
-                            Gå till admin-vy
-                        </button>
                     </section>
                 </div>
 
