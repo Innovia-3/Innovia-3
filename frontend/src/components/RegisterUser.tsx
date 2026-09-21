@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import Input from "./Input";
 import { useNavigate } from "react-router-dom";
 import styles from "./css/RegisterUser.module.css";
@@ -10,7 +10,7 @@ export default function RegisterUser() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  //   const [message, setMessage] = useState("");
+  const [showForm, setShowForm] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -42,11 +42,9 @@ export default function RegisterUser() {
       if (!response.ok) {
         const errorMessage = await response.text();
         console.log("Register error:", response.status, errorMessage);
-
         setError(errorMessage || "Något gick fel");
         return;
       }
-      
     } catch {
       setError("Kunde inte ansluta till servern. Försök igen.");
     } finally {
@@ -55,40 +53,52 @@ export default function RegisterUser() {
   };
 
   return (
-    <>
-    <section>
+    <section className={styles.register}>
       <button
-        className={styles.backButton}
+        className={styles.registerButton}
         type="button"
-        onClick={() => navigate("/")}
+        onClick={() => setShowForm(!showForm)}
       >
-        Tillbaka
+        {showForm ? "Stäng registrering" : "Registrera användare"}
       </button>
-      <h2>Registrera användare</h2>
 
-      <form onSubmit={handleSubmit}>
-        <Input
-          type="email"
-          label="E-post"
-          value={email}
-          placeholder="dittnamn@innoviahub.se"
-          onChange={setEmail}
-        />
-        <Input
-          type="password"
-          label="lösenord"
-          value={password}
-          placeholder="Abcd1234!"
-          onChange={setPassword}
-        />
+      {showForm && (
+        <>
+          <button
+            className={styles.backButton}
+            type="button"
+            onClick={() => navigate("/")}
+          >
+            Tillbaka
+          </button>
 
-        {error && <p role="alert">{error}</p>}
+          <h2>Registrera användare</h2>
 
-        <button type="submit">
-          {loading ? "Registrerar in..." : "Registrera"}
-        </button>
-      </form>
+          <form onSubmit={handleSubmit}>
+            <Input
+              type="email"
+              label="E-post"
+              value={email}
+              placeholder="dittnamn@innoviahub.se"
+              onChange={setEmail}
+            />
+
+            <Input
+              type="password"
+              label="lösenord"
+              value={password}
+              placeholder="Abcd1234!"
+              onChange={setPassword}
+            />
+
+            {error && <p role="alert">{error}</p>}
+
+            <button type="submit">
+              {loading ? "Registrerar in..." : "Registrera"}
+            </button>
+          </form>
+        </>
+      )}
     </section>
-    </>
   );
 }
