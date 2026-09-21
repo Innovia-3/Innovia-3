@@ -9,6 +9,7 @@ type Booking = {
   endTime: string;
   resourceId: number;
   resourceType: string;
+  resourceName: string;
   userId: string;
   userEmail: string;
 };
@@ -149,7 +150,7 @@ export default function Bookings() {
         <div className={styles.bookingList}>
           {visibleBookings.map((booking) => (
             <div key={booking.bookingId} className={styles.bookingRow}>
-              <div className={styles.resource}>{booking.resourceType}</div>
+              <div className={styles.resource}>{booking.resourceName}</div>
               <div className={styles.resourceId}>{booking.resourceId}</div>
 
               <div className={styles.user}>{booking.userEmail}</div>
