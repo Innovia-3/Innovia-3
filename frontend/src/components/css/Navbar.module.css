@@ -44,3 +44,19 @@
     color: var(--primary);
     background-color: rgba(16, 125, 214, 0.05);
 }
+
+@media (max-width: 600px) {
+  .navbar {
+    height: 64px;
+    padding: 12px;
+  }
+
+  .logo {
+    font-size: 24px;
+  }
+
+  .loginButton {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+}
