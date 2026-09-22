@@ -12,7 +12,7 @@ export default function LandingPage() {
             <main className={styles.adminPage}>
                 <RegisterUser />
                 <div className={styles.adminBookingViewWrapper}>
-                    <Bookings />
+                    <AdminBookings />
                 </div>
 
                 <div className={styles.resourceStatusAndUserListWrapper}>
