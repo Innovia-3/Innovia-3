@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import styles from "./css/AdminPage.module.css";
 import UserList from "../components/UserList";
-import Bookings from "../components/Bookings";
+import AdminBookings from "../components/AdminBookings";
 import ResourceStatus from "../components/ResourceStatus";
 import RegisterUser from "../components/RegisterUser";
 
@@ -29,7 +29,7 @@ export default function LandingPage() {
                             Gå till landnings-vy
                         </button>
                     </section>
-                    <Bookings />
+                    <AdminBookings />
                 </div>
 
                 <div className={styles.resourceStatusAndUserListWrapper}>
