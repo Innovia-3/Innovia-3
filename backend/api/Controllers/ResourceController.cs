@@ -7,12 +7,14 @@ using api.Interfaces;
 using api.Models;
 using api.Repositories;
 using api.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualBasic;
 
 namespace api.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]s")]
     public class ResourceController : ControllerBase

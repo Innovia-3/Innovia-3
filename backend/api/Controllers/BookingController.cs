@@ -32,6 +32,7 @@ namespace api.Controllers
             _timeService = timeService;
         }
 
+        [Authorize(Roles="Admin")]
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
