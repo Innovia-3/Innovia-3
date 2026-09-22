@@ -13,7 +13,7 @@ type TimeSlot = {
   startTime: string;
   endTime: string;
   isAvailable: boolean;
-  status: "green" | "yellow" | "red" | "locked";
+  status: "green" | "yellow" | "red" | "blue" | "locked";
 };
 
 export default function LandingPage() {

@@ -32,14 +32,14 @@ export default function AdminBookings() {
 
   console.log("now: " + now);
 
-    const passedBookings = useMemo(
+  const passedBookings = useMemo(
     () => bookings.filter((b) => Date.parse(b.endTime) < now),
     [bookings, now],
-    );
-    const activeBookings = useMemo(
+  );
+  const activeBookings = useMemo(
     () => bookings.filter((b) => Date.parse(b.endTime) >= now),
     [bookings, now],
-    );
+  );
 
   useEffect(() => {
     async function getBookings() {
@@ -54,10 +54,10 @@ export default function AdminBookings() {
         }
 
         const response = await fetch(`${API_URL}/api/Bookings`, {
-        method: "GET",
-        headers: {
+          method: "GET",
+          headers: {
             Authorization: `Bearer ${token}`,
-            },
+          },
         });
 
         console.log("GET /api/Bookings status:", response.status);
@@ -175,14 +175,19 @@ export default function AdminBookings() {
         <div className={styles.headerAndButton}>
           <p className={styles.eyebrow}>Bokningar</p>
 
-          {bookings.length > 5 && (
-            <button type="button" onClick={() => setShowAll(!showAll)}>
-              {showAll ? "Visa färre bokningar ↑" : "Visa alla bokningar →"}
+          <div className={styles.buttonGroup}>
+            <button type="button" onClick={() => setShowPassed(!showPassed)}>
+              {showPassed
+                ? "Visa aktuella bokningar ↑"
+                : "Visa gamla bokningar →"}
             </button>
-          )}
-          <button type="button" onClick={() => setShowPassed(!showPassed)}>
-            {showPassed ? "Visa aktuella bokningar" : "Visa gamla bokningar"}
-          </button>
+
+            {bookings.length > 5 && (
+              <button type="button" onClick={() => setShowAll(!showAll)}>
+                {showAll ? "Visa färre bokningar ↑" : "Visa alla bokningar →"}
+              </button>
+            )}
+          </div>
         </div>
 
         <div className={styles.info}>
