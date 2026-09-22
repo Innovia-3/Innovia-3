@@ -29,6 +29,7 @@ type Resource = {
 type Booking = {
   bookingId: number;
   resourceId: number;
+  resourceType: string;
   startTime: string;
   endTime: string;
 };
@@ -187,7 +188,14 @@ export default function TimeSlots({
               const bookingStart = new Date(booking.startTime);
               const bookingEnd = new Date(booking.endTime);
 
-              return start < bookingEnd && end > bookingStart;
+              const sameTime = start < bookingEnd && end > bookingStart;
+
+              const sameResource =
+                selectedResourceId !== null
+                  ? booking.resourceId === selectedResourceId
+                  : booking.resourceType === selectedResourceType;
+
+              return sameTime && sameResource;
             });
 
             const params = new URLSearchParams({
