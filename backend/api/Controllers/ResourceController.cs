@@ -7,6 +7,7 @@ using api.Interfaces;
 using api.Models;
 using api.Repositories;
 using api.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualBasic;

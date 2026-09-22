@@ -154,6 +154,27 @@ button:active {
     transform: translateY(-50%) scale(0.97);
 }
 
+.headerAndButton {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.buttonGroup {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+@media (max-width: 1000px) {
+  .buttonGroup button {
+    font-size: 11px;
+    letter-spacing: 0.8px;
+    padding: 3px 4px;
+  }
+}
+
 @media (max-width: 600px) {
   .bookingsWrapper {
     padding: 16px;
@@ -199,5 +220,17 @@ button:active {
     font-size: 11px;
     padding: 3px 5px;
     letter-spacing: 1.3px;
+  }
+
+  .buttonGroup {
+    gap: 3px;
+  }
+
+  .buttonGroup button {
+    font-size: 10px;
+    letter-spacing: 0.2px;
+    padding: 2px 3px;
+    white-space: nowrap;
+    margin: 0;
   }
 }

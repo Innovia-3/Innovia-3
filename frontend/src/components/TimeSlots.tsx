@@ -7,7 +7,7 @@ type TimeSlot = {
   startTime: string;
   endTime: string;
   isAvailable: boolean;
-  status: "green" | "yellow" | "red" | "locked";
+  status: "green" | "yellow" | "red" | "blue" | "locked";
 };
 
 type TimeSlotsProps = {
@@ -24,6 +24,13 @@ type TimeSlotsProps = {
 type Resource = {
   resourceId: number;
   resourceType: string;
+};
+
+type Booking = {
+  bookingId: number;
+  resourceId: number;
+  startTime: string;
+  endTime: string;
 };
 
 const SLOT_START_HOUR = 0;
@@ -68,6 +75,7 @@ export default function TimeSlots({
   const [error, setError] = useState("");
   const [selectedStart, setSelectedStart] = useState<TimeSlot | null>(null);
   const [chooseSpecificResource, setChooseSpecificResource] = useState(false);
+  const [myBookings, setMyBookings] = useState<Booking[]>([]);
 
   useEffect(() => {
     async function fetchResources() {
@@ -94,6 +102,36 @@ export default function TimeSlots({
 
     fetchResources();
   }, [selectedResourceType]);
+
+  useEffect(() => {
+    async function fetchMyBookings() {
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        setMyBookings([]);
+        return;
+      }
+
+      try {
+        const response = await fetch(`${API_URL}/api/Bookings/mine`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error("Kunde inte hämta mina bokningar.");
+        }
+
+        const data: Booking[] = await response.json();
+        setMyBookings(data);
+      } catch (error) {
+        console.error("Kunde inte hämta mina bokningar:", error);
+      }
+    }
+
+    fetchMyBookings();
+  }, [refreshKey]);
 
   useEffect(() => {
     async function checkAvailability() {
@@ -145,6 +183,13 @@ export default function TimeSlots({
 
             const end = new Date(slot.endTime);
 
+            const isMyBooking = myBookings.some((booking) => {
+              const bookingStart = new Date(booking.startTime);
+              const bookingEnd = new Date(booking.endTime);
+
+              return start < bookingEnd && end > bookingStart;
+            });
+
             const params = new URLSearchParams({
               startTime: start.toISOString(),
               endTime: end.toISOString(),
@@ -176,6 +221,14 @@ export default function TimeSlots({
               selectedResourceId,
               data,
             );
+
+            if (isMyBooking) {
+              return {
+                ...slot,
+                isAvailable: false,
+                status: "blue" as const,
+              };
+            }
 
             if (selectedResourceId !== null) {
               return {
@@ -222,6 +275,7 @@ export default function TimeSlots({
     selectedResourceType,
     onSlotSelect,
     refreshKey,
+    myBookings,
   ]);
 
   function formatTime(dateString: string) {

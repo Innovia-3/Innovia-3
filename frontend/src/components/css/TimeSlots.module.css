@@ -173,6 +173,12 @@ p {
   border-color: #8c3c49;
 }
 
+.blue {
+    background-color: #155094;
+    border-color: #1779bb;
+    color: white;
+}
+
 .locked {
   background: var(--surface);
   border-color: var(--border);
