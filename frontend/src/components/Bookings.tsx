@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import styles from "./css/Bookings.module.css";
+import * as signalR from "@microsoft/signalr";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -9,7 +10,6 @@ type Booking = {
   endTime: string;
   resourceId: number;
   resourceType: string;
-  resourceName: string;
   userId: string;
   userEmail: string;
 };
@@ -19,6 +19,27 @@ export default function Bookings() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [showAll, setShowAll] = useState(false);
+  const [showPassed, setShowPassed] = useState(false);
+
+  // const connection = new signalR.HubConnectionBuilder()
+  //   .withUrl("http://localhost:5197/Hubs/Booking")
+  //   .build();
+
+  // connection.on("BookingsChanged", () => {
+  //   console.log("Hallo from connection!");
+  // });
+  const now = new Date().getTime();
+
+  console.log("now: " + now);
+
+  const passedBookings = useMemo(
+    () => bookings.filter((b) => Date.parse(b.endTime) > now),
+    [bookings, now],
+  );
+  const activeBookings = useMemo(
+    () => bookings.filter((b) => now > Date.parse(b.endTime)),
+    [bookings, now],
+  );
 
   useEffect(() => {
     async function getBookings() {
@@ -74,6 +95,35 @@ export default function Bookings() {
     }
 
     getBookings();
+
+    const connection = new signalR.HubConnectionBuilder()
+      .withUrl(`${API_URL}/Hubs/Booking`)
+      .withAutomaticReconnect()
+      .build();
+
+    connection.on("BookingsChanged", () => {
+      getBookings();
+    });
+
+    connection
+      .start()
+      .then(() => {
+        console.log("SignalR ansluten!");
+      })
+      .catch((error) => {
+        if (
+          error instanceof Error &&
+          error.message.includes("stopped during negotiation")
+        ) {
+          return;
+        }
+
+        console.error("SignalR-fel:", error);
+      });
+
+    return () => {
+      connection.stop();
+    };
   }, []);
 
   function formatDate(dateString: string) {
@@ -90,21 +140,34 @@ export default function Bookings() {
   const deleteBooking = async (id: number) => {
     const token = localStorage.getItem("token");
 
-    const response = await fetch(`${API_URL}/api/Bookings/${id}`, {
+    await fetch(`${API_URL}/api/Bookings/${id}`, {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${token}`,
       },
+    }).then((response) => {
+      if (response.status === 200) {
+        setBookings(
+          bookings.filter((booking) => {
+            return booking.bookingId! == id;
+          }),
+        );
+      } else {
+        return;
+      }
     });
-
-    if (response.ok) {
-      setBookings((current) =>
-        current.filter((booking) => booking.bookingId !== id),
-      );
-    }
   };
 
-  const visibleBookings = showAll ? bookings : bookings.slice(0, 5);
+  // const visibleBookings = showAll && !showPassed ? bookings : bookings.slice(0, 5);
+  function visibleBookings() {
+    return showAll && !showPassed
+      ? activeBookings
+      : showAll && showPassed
+        ? passedBookings
+        : !showAll && showPassed
+          ? passedBookings.slice(0, 5)
+          : activeBookings.slice(0, 5);
+  }
 
   return (
     <section id="bookings" className={styles.bookingsWrapper}>
@@ -117,11 +180,13 @@ export default function Bookings() {
               {showAll ? "Visa färre bokningar ↑" : "Visa alla bokningar →"}
             </button>
           )}
+          <button type="button" onClick={() => setShowPassed(!showPassed)}>
+            {showPassed ? "Visa gamla bokningar" : "Visa aktuella bokningar"}
+          </button>
         </div>
 
         <div className={styles.info}>
           <div className={styles.resource}>Resurs</div>
-          <div className={styles.resourceId}>ID</div>
           <div className={styles.user}>Användare</div>
           <div className={styles.date}>Datum</div>
           <div className={styles.time}>Tid</div>
@@ -148,10 +213,9 @@ export default function Bookings() {
 
       {!loading && !error && bookings.length > 0 && (
         <div className={styles.bookingList}>
-          {visibleBookings.map((booking) => (
+          {visibleBookings().map((booking) => (
             <div key={booking.bookingId} className={styles.bookingRow}>
-              <div className={styles.resource}>{booking.resourceName}</div>
-              <div className={styles.resourceId}>{booking.resourceId}</div>
+              <div className={styles.resource}>{booking.resourceType}</div>
 
               <div className={styles.user}>{booking.userEmail}</div>
 
