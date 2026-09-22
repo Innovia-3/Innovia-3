@@ -33,12 +33,12 @@ export default function Bookings() {
   console.log("now: " + now);
 
   const passedBookings = useMemo(
-    () => bookings.filter((b) => Date.parse(b.endTime) > now),
-    [bookings, now],
+  () => bookings.filter((b) => Date.parse(b.endTime) < now),
+  [bookings, now],
   );
   const activeBookings = useMemo(
-    () => bookings.filter((b) => now > Date.parse(b.endTime)),
-    [bookings, now],
+  () => bookings.filter((b) => Date.parse(b.endTime) >= now),
+  [bookings, now],
   );
 
   useEffect(() => {
@@ -181,7 +181,7 @@ export default function Bookings() {
             </button>
           )}
           <button type="button" onClick={() => setShowPassed(!showPassed)}>
-            {showPassed ? "Visa gamla bokningar" : "Visa aktuella bokningar"}
+            {showPassed ? "Visa aktuella bokningar" : "Visa gamla bokningar"}
           </button>
         </div>
 
