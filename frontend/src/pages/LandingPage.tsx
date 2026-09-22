@@ -179,19 +179,6 @@ export default function LandingPage() {
               setBookingError("");
             }}
           />
-
-          <section className={styles.welcome}>
-            <p className={styles.eyebrow}>Innovia</p>
-
-            <h1>Välkommen</h1>
-
-            <p className={styles.description}>
-              Välj en resurs, ett datum och en ledig tid för att genomföra en
-              bokning.
-            </p>
-
-
-          </section>
         </div>
 
         <div className={styles.bookingCalendarWrapper}>
