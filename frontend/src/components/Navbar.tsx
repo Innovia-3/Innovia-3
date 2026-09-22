@@ -9,12 +9,15 @@ export default function Navbar() {
   const [isLoggedIn, setIsLoggedIn] = useState(!!token);
 
   const payload = token
-    ? JSON.parse(atob(token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/")))
+    ? JSON.parse(
+        atob(token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/")),
+      )
     : null;
 
   const isAdmin =
-  payload?.["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] ===
-  "Admin";
+    payload?.[
+      "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
+    ] === "Admin";
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -26,7 +29,7 @@ export default function Navbar() {
     <nav className={styles.navbar}>
       <h1 className={styles.logo}>Innovia</h1>
 
-      <div>
+      <div className={styles.buttonWrapper}>
         {isLoggedIn && location.pathname === "/" && (
           <button
             className={styles.loginButton}
@@ -41,9 +44,11 @@ export default function Navbar() {
         {isAdmin && (
           <button
             className={styles.loginButton}
-            onClick={() => navigate("/admin")}
+            onClick={() =>
+              navigate(location.pathname === "/admin" ? "/" : "/admin")
+            }
           >
-            Admin-vy
+            {location.pathname === "/admin" ? "Startsida" : "Admin-vy"}
           </button>
         )}
 

@@ -14,7 +14,6 @@ using Microsoft.VisualBasic;
 
 namespace api.Controllers
 {
-    [Authorize]
     [ApiController]
     [Route("api/[controller]s")]
     public class ResourceController : ControllerBase
